@@ -1,0 +1,277 @@
+/* ==========================================================================
+   Section 02 — What we do
+
+   Three capability areas threaded by one flow line. Dark band, editorial
+   heading, restrained interaction: the line extends under the area you are
+   pointing at and a single packet runs it. Nothing is hidden behind hover.
+   ========================================================================== */
+
+/* ---- Flow zone ---------------------------------------------------------- */
+
+.flow {
+  position: relative;
+}
+
+/* The connecting line runs behind the panel nodes on desktop only, so the
+   three areas read as one continuous system. */
+.flowLine {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .flowLine {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--border-thick);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(
+      90deg,
+      var(--gradient-flow-stop-1) 0%,
+      var(--gradient-flow-stop-2) 55%,
+      var(--gradient-flow-stop-3) 100%
+    );
+    opacity: 0.45;
+  }
+}
+
+/* ---- Grid --------------------------------------------------------------- */
+
+.grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-10);
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-8);
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(2.5rem, 4vw, 4rem);
+  }
+}
+
+/* ---- Panel -------------------------------------------------------------- */
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-top: var(--space-8);
+  border-top: var(--border-thick) solid var(--color-border);
+  transition: border-color var(--duration-component) var(--ease-flow);
+}
+
+/* This area's own run of the flow line, drawn over the resting rule and
+   extended from the node outward on interaction. */
+.panel::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--border-thick));
+  left: 0;
+  right: 0;
+  height: var(--border-thick);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--gradient-flow-stop-1) 0%,
+    var(--gradient-flow-stop-2) 100%
+  );
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--duration-reveal) var(--ease-flow);
+}
+
+/* The technical detail: one packet that runs this area's line once the area is
+   engaged. It carries no information — the section reads identically without
+   it — so it is safe to key entirely off hover / focus. */
+.panel::after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--border-thick) - 2px);
+  left: 0;
+  right: 0;
+  height: 0.375rem;
+  /* The packet is painted as a background dot and travelled with
+     `background-position`, so its distance is the panel's own width at any
+     breakpoint and no length has to be hard-coded. */
+  background-image: radial-gradient(
+    circle,
+    var(--gradient-flow-stop-3) 0 45%,
+    transparent 55%
+  );
+  background-repeat: no-repeat;
+  background-size: 0.375rem 0.375rem;
+  background-position: 0% 50%;
+  opacity: 0;
+  transition: background-position var(--duration-reveal) var(--ease-flow),
+    opacity var(--duration-micro) var(--ease-flow);
+}
+
+.panel:hover,
+.panel:focus-within {
+  border-top-color: var(--color-border-accent);
+}
+
+/* From the three-column layout up, the continuous flow line IS the rule above
+   each area. The panel's own border would otherwise paint over it and leave
+   the gradient showing only in the column gaps — three bright dashes instead
+   of one line. */
+@media (min-width: 900px) {
+  .panel,
+  .panel:hover,
+  .panel:focus-within {
+    border-top-color: transparent;
+  }
+}
+
+.panel:hover::before,
+.panel:focus-within::before {
+  transform: scaleX(1);
+}
+
+.panel:hover::after,
+.panel:focus-within::after {
+  opacity: 1;
+  background-position: 100% 50%;
+}
+
+/* The node that sits on the flow line. */
+.node {
+  position: absolute;
+  top: calc(-1 * var(--border-thick));
+  left: 0;
+  z-index: 1;
+  width: 0.875rem;
+  height: 0.875rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  background-color: var(--color-bg);
+  transition: transform var(--duration-component) var(--ease-flow),
+    background-color var(--duration-component) var(--ease-flow),
+    box-shadow var(--duration-component) var(--ease-flow);
+}
+
+.panel:hover .node,
+.panel:focus-within .node {
+  transform: scale(1.2);
+  background-color: var(--color-accent);
+  box-shadow: 0 0 0 6px rgba(0, 212, 199, 0.12);
+}
+
+/* The heading shifts by 2px and no more — a nudge, not a card lift. */
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  transition: transform var(--duration-component) var(--ease-flow);
+}
+
+.panel:hover .panelHead,
+.panel:focus-within .panelHead {
+  transform: translateY(-2px);
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--duration-component) var(--ease-flow);
+}
+
+.panel:hover .index,
+.panel:focus-within .index {
+  color: var(--color-accent);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.1vw, 2.125rem); /* 28 → 34 */
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.description {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 38ch;
+}
+
+/* ---- Facets ------------------------------------------------------------- */
+
+.facets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-3);
+}
+
+.facet {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem var(--space-4);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  background-color: var(--color-action-quiet-bg);
+  transition: border-color var(--duration-component) var(--ease-flow),
+    color var(--duration-component) var(--ease-flow);
+}
+
+.panel:hover .facet,
+.panel:focus-within .facet {
+  border-color: var(--color-border-accent);
+  color: var(--color-text);
+}
+
+/* ---- Reduced motion ----------------------------------------------------- */
+
+/* The line still extends and the node still fills — those are state, not
+   decoration — but nothing travels or slides. */
+@media (prefers-reduced-motion: reduce) {
+  .panel::before,
+  .panel::after,
+  .panelHead,
+  .node {
+    transition: opacity 120ms linear;
+  }
+
+  .panel:hover::after,
+  .panel:focus-within::after {
+    opacity: 0;
+  }
+
+  .panel:hover .panelHead,
+  .panel:focus-within .panelHead {
+    transform: none;
+  }
+}
+
+[data-motion='reduced'] .panel:hover::after,
+[data-motion='reduced'] .panel:focus-within::after {
+  opacity: 0;
+}
+
+[data-motion='reduced'] .panel:hover .panelHead,
+[data-motion='reduced'] .panel:focus-within .panelHead {
+  transform: none;
+}

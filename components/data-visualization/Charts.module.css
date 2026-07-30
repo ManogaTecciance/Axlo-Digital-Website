@@ -1,0 +1,210 @@
+/* Axlo data-visualization system.
+   Flow Aqua = primary series, Kinetic Teal = secondary, Volt Lime = key
+   highlight only, neutral greys for context. No 3D. Never colour alone. */
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.frameHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.frameTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-title);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.frameSummary {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Legend swatches carry a shape as well as a colour, so series remain
+   distinguishable without colour perception. */
+.swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.axis {
+  stroke: var(--viz-grid);
+  stroke-width: 1;
+}
+
+.axisLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--viz-label);
+}
+
+.valueLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--viz-label);
+}
+
+.series1 {
+  fill: var(--viz-series-1);
+}
+.series2 {
+  fill: var(--viz-series-2);
+}
+.series3 {
+  fill: var(--viz-series-3);
+}
+.highlight {
+  fill: var(--viz-highlight);
+}
+
+.lineSeries {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lineSeries1 {
+  stroke: var(--viz-series-1);
+}
+
+.lineSeries2 {
+  stroke: var(--viz-series-2);
+  stroke-dasharray: 6 5;
+}
+
+.tableToggle {
+  align-self: flex-start;
+  min-height: 2.75rem;
+  font-size: var(--text-body-sm);
+  color: var(--color-action);
+  cursor: pointer;
+}
+
+/* The data table is the accessible equivalent of the chart, so it must stay
+   readable at any width — it scrolls inside its own box rather than widening
+   the page. */
+.tableScroll {
+  overflow-x: auto;
+  margin-top: var(--space-3);
+}
+
+.table {
+  width: 100%;
+  min-width: 18rem;
+  font-size: var(--text-body-sm);
+  border-collapse: collapse;
+}
+
+.table caption {
+  text-align: left;
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  padding-bottom: var(--space-2);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+}
+
+.table th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.table td {
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- KPI card ----------------------------------------------------------- */
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.kpiLabel {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.kpiValue {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.kpiNote {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.kpiDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.kpiDeltaMark {
+  font-family: var(--font-mono);
+}
+
+.kpiGrid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.sampleNote {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}

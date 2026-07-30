@@ -1,0 +1,91 @@
+/* The connected flow: the Axlo diagonal as a structural element. */
+
+.flowLine {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.pathTrack {
+  stroke: var(--color-border);
+}
+
+.pathActive {
+  stroke: url(#axlo-flow-gradient);
+  stroke-dasharray: var(--flow-dash-length, 1200);
+  stroke-dashoffset: var(--flow-dash-length, 1200);
+}
+
+/* Drawn when the connector scrolls into view. */
+.pathActive[data-drawn='true'] {
+  animation: axlo-flow-dash var(--flow-duration, 1.1s) var(--ease-flow) forwards;
+}
+
+/* A single travelling packet communicates direction of flow.
+   One dot, not a particle field. */
+.packet {
+  fill: var(--gradient-flow-stop-3);
+  offset-path: var(--flow-offset-path);
+  offset-rotate: 0deg;
+  animation: axlo-travel var(--duration-ambient) var(--ease-standard) infinite;
+}
+
+.connector {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(4rem, 9vw, 7rem);
+  background-color: var(--color-bg);
+}
+
+/* Section boundary connector — stitches a dark band to the light one below */
+.connectorSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.slash {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.slashPath {
+  fill: url(#axlo-slash-gradient);
+}
+
+.slashDraw {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 900ms var(--ease-flow);
+}
+
+.slashDraw[data-drawn='true'] {
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pathActive {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .packet {
+    display: none;
+  }
+  .slashDraw {
+    clip-path: none;
+    transition: none;
+  }
+}

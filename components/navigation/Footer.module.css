@@ -1,0 +1,206 @@
+/* Deliberately quieter than the Final CTA above it: the same dark base, no
+   accent fills, and type that is readable without ever becoming a second
+   closing statement. */
+.footer {
+  position: relative;
+  overflow: clip;
+  background-color: var(--color-bg-deep);
+  color: var(--color-text);
+  border-top: var(--border-hairline) solid var(--color-border);
+  padding-block: var(--space-20) var(--space-12);
+}
+
+.top {
+  position: relative;
+  display: grid;
+  gap: var(--space-12);
+  grid-template-columns: 1fr;
+  padding-bottom: var(--space-12);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+}
+
+/* Two columns as soon as there is room, three from the tablet up: brand and
+   contact, the page's sections, then the products. */
+@media (min-width: 640px) {
+  .top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .brandBlock {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 900px) {
+  .top {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-16);
+  }
+
+  .brandBlock {
+    grid-column: auto;
+  }
+}
+
+.column {
+  min-width: 0;
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 42ch;
+}
+
+/* Same reasoning as the header brand: a link needs a 44px target even when the
+   artwork inside it is shorter. */
+.brandLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  width: fit-content;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+  max-width: 22ch;
+}
+
+.columnTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-5);
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--duration-micro) var(--ease-flow);
+}
+
+.link:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.bottom {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding-top: var(--space-8);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.copyright {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+/* The one piece of the footer allowed any emphasis — it is the address people
+   come here to find. */
+.contactLine {
+  font-size: var(--text-body-md);
+}
+
+/* A real 44px target, not a 20px line of text — this is the one thing in the
+   footer people tap. */
+.contactLine a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+}
+
+.contactLine a:hover {
+  color: var(--color-accent);
+}
+
+/* Legal placeholders — visibly pending, announced, never a dead link. */
+.placeholder {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.placeholderTag {
+  padding: 0.1rem var(--space-2);
+  border: var(--border-hairline) dashed var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+}
+
+/* ---- Background wordmark ------------------------------------------------- */
+
+/* Sits under the footer's own bottom rule at very low contrast: it reads as a
+   watermark in the surface, never as text competing with the links. It is
+   clipped by the footer, so it can never create horizontal scroll, and it is
+   dropped entirely on small screens where there is no room for it to be
+   anything but noise. */
+.wordmark {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .wordmark {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: -0.3em;
+    z-index: 0;
+    font-family: var(--font-display);
+    font-size: clamp(7rem, 15vw, 13rem);
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    opacity: 0.03;
+    pointer-events: none;
+    user-select: none;
+  }
+}

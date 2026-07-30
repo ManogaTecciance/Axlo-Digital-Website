@@ -1,0 +1,27 @@
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-cursor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--gradient-flow);
+  color: var(--ink-900);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(0.9);
+  transition: opacity var(--duration-micro) var(--ease-flow),
+    transform var(--duration-micro) var(--ease-flow);
+}
+
+.visible {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1);
+}

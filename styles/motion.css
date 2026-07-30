@@ -1,0 +1,137 @@
+/* ==========================================================================
+   Axlo Flow — Motion primitives
+   Motion communicates acceleration, connection, revelation, response,
+   continuity. Never decoration for its own sake.
+   ========================================================================== */
+
+@keyframes axlo-flow-dash {
+  from {
+    stroke-dashoffset: var(--flow-dash-length, 1000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes axlo-node-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes axlo-travel {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8%,
+  92% {
+    opacity: 1;
+  }
+  to {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes axlo-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes axlo-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes axlo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes axlo-status-tick {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* --- Shared helpers ------------------------------------------------------ */
+
+.axlo-animate-in {
+  animation: axlo-fade-up var(--duration-reveal) var(--ease-flow) both;
+}
+
+/* Ambient loops opt in to this class so a single rule can pause them all
+   when the user hits the pause control or leaves the viewport. */
+[data-ambient='paused'] .axlo-ambient,
+[data-ambient='paused'].axlo-ambient {
+  animation-play-state: paused !important;
+}
+
+/* --- Reduced motion ------------------------------------------------------
+   Content and functionality are preserved. Path draws snap to final state,
+   loops stop, parallax and pointer response are removed. Reveals collapse
+   to a short opacity fade so nothing appears to "jump".                     */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .axlo-animate-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-flow-path] {
+    stroke-dashoffset: 0 !important;
+    stroke-dasharray: none !important;
+  }
+
+  [data-parallax] {
+    transform: none !important;
+  }
+}
+
+/* The same rules apply when the user has forced reduced motion through the
+   in-page control, which sets data-motion="reduced" on <html>. */
+
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+[data-motion='reduced'] [data-flow-path] {
+  stroke-dashoffset: 0 !important;
+  stroke-dasharray: none !important;
+}

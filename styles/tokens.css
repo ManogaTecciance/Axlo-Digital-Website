@@ -1,0 +1,182 @@
+/* ==========================================================================
+   Axlo Flow Design System — Primitive tokens
+   Raw brand values. Components must NEVER reference these directly;
+   they consume the semantic tokens defined in light-theme.css / dark-theme.css.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand palette ---------------------------------------------------- */
+  --axlo-midnight: #0b1220;
+  --axlo-midnight-deep: #07101c;
+  --axlo-midnight-subtle: #111827;
+  --kinetic-teal: #006c68;
+  --flow-aqua: #00d4c7;
+  --volt-lime: #c7ff3d;
+  --axlo-cloud: #f4f7f7;
+  --digital-slate: #5f6b75;
+  --pure-white: #ffffff;
+
+  /* ---- Extended neutrals ------------------------------------------------ */
+  --surface-900: #121d2b;
+  --surface-800: #1a2635;
+  --surface-700: #203042;
+  --line-800: #2a3a4a;
+  --line-700: #425466;
+  /* Dark-theme text ramp — the approved hierarchy, used verbatim:
+     primary #FFFFFF, secondary #C4CED6, muted #9AA8B3. */
+  --ink-050: #ffffff;
+  --ink-200: #c4ced6;
+  --ink-400: #9aa8b3;
+  --ink-500: #7e8a94;
+  --ink-900: #0b1220;
+
+  --cloud-050: #f8fafa;
+  --cloud-100: #f4f7f7;
+  --cloud-300: #dce3e8;
+  --cloud-500: #afbbc4;
+
+  /* ---- Action ramp ------------------------------------------------------ */
+  --action-dark: #00afa6;
+  --action-dark-hover: #00c5ba;
+  --action-light: #006c68;
+  --action-light-hover: #005955;
+
+  /* ---- Signature gradient ---------------------------------------------- */
+  --gradient-flow: linear-gradient(135deg, #00d4c7 0%, #54e58b 55%, #c7ff3d 100%);
+  --gradient-flow-soft: linear-gradient(
+    135deg,
+    rgba(0, 212, 199, 0.16) 0%,
+    rgba(84, 229, 139, 0.12) 55%,
+    rgba(199, 255, 61, 0.1) 100%
+  );
+  --gradient-flow-stop-1: #00d4c7;
+  --gradient-flow-stop-2: #54e58b;
+  --gradient-flow-stop-3: #c7ff3d;
+
+  /* ---- Spacing — 4px base ---------------------------------------------- */
+  --space-1: 0.25rem;  /*  4px */
+  --space-2: 0.5rem;   /*  8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-7: 1.75rem;  /* 28px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-14: 3.5rem;  /* 56px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+  --space-24: 6rem;    /* 96px */
+  --space-32: 8rem;    /* 128px */
+  --space-40: 10rem;   /* 160px */
+
+  /* Section rhythm. Stepped rather than fluid so the vertical beat is the same
+     figure on every band at a given class of viewport:
+     mobile 64–80 → tablet 80–96 → laptop 96–120 → desktop 120–144.
+     Every section reads one of these two; no band sets its own padding. */
+  --section-padding-block: 4rem;   /* 64 */
+  --section-padding-block-lg: 5rem; /* 80 */
+
+  /* Internal rhythm inside a section head. Named so no component re-invents
+     the eyebrow → heading → lead → content ladder with one-off margins. */
+  --flow-eyebrow-heading: var(--space-4);  /* 16 */
+  --flow-heading-lead: var(--space-6);     /* 24 */
+  --flow-intro-content: var(--space-12);   /* 48 */
+  --flow-card-gap: var(--space-6);         /* 24 */
+
+  /* ---- Layout -----------------------------------------------------------
+     `--container-max` is the CONTENT width; the gutter sits outside it, so a
+     1440 laptop reads as 72 + 1296 + 72 rather than a 1184 column adrift in
+     the middle of the screen. The gutter is stepped for the same reason as the
+     section rhythm — a predictable figure per device class. */
+  --container-max: 1320px;
+  --container-wide: 1560px;
+  --container-text: 68ch;
+  --gutter: 1.25rem; /* 20 */
+  --grid-columns: 4;
+  --grid-gap: var(--space-4);
+
+  /* ---- Radii ------------------------------------------------------------ */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* ---- Border widths ---------------------------------------------------- */
+  --border-hairline: 1px;
+  --border-thick: 2px;
+
+  /* ---- Z-index ---------------------------------------------------------- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-overlay: 300;
+  --z-dialog: 400;
+  --z-toast: 500;
+  --z-cursor: 600;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-flow: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --duration-micro: 150ms;
+  --duration-component: 220ms;
+  --duration-reveal: 560ms;
+  --duration-hero: 1200ms;
+  --duration-ambient: 12s;
+
+  /* ---- Typography families --------------------------------------------- */
+  --font-display: var(--font-sora), "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, monospace;
+}
+
+@media (min-width: 480px) {
+  :root {
+    --gutter: 1.5rem; /* 24 */
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --grid-columns: 8;
+    --grid-gap: var(--space-6);
+    --gutter: 2.25rem; /* 36 */
+    --section-padding-block: 5rem;   /* 80 */
+    --section-padding-block-lg: 6rem; /* 96 */
+    --flow-intro-content: var(--space-14);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --grid-columns: 12;
+    --grid-gap: var(--space-6);
+    --gutter: 3rem; /* 48 */
+    --section-padding-block: 6rem;    /* 96 */
+    --section-padding-block-lg: 7.5rem; /* 120 */
+    --flow-eyebrow-heading: var(--space-5);  /* 20 */
+    --flow-intro-content: var(--space-16);   /* 64 */
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --gutter: 3.5rem; /* 56 */
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --grid-gap: var(--space-8);
+    --gutter: 4.5rem; /* 72 */
+    --section-padding-block: 7.5rem; /* 120 */
+    --section-padding-block-lg: 9rem; /* 144 */
+  }
+}

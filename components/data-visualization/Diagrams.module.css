@@ -1,0 +1,81 @@
+/* Small system diagrams. Used in place of generic outline icons so every
+   graphic says something specific about the idea beside it. */
+
+.diagram {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.frame {
+  fill: var(--color-surface);
+  stroke: var(--color-border);
+}
+
+.frameStrong {
+  fill: var(--color-surface-raised);
+  stroke: var(--color-border-strong);
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.25;
+}
+
+.lineAccent {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.lineDashed {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 7;
+  stroke-linecap: round;
+  animation: diagram-dash 2.4s linear infinite;
+}
+
+@keyframes diagram-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.dot {
+  fill: var(--color-accent);
+}
+
+.dotMuted {
+  fill: var(--color-text-muted);
+}
+
+.highlight {
+  fill: var(--color-highlight);
+}
+
+.bar {
+  fill: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+.barAccent {
+  fill: var(--color-accent);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  fill: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lineDashed {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}

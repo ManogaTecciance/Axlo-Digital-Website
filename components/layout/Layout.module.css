@@ -1,0 +1,55 @@
+/* Container / Section / Grid */
+
+/* The max-width is content + both gutters, so `--container-max` is the width
+   of the content column itself and the page padding is never eaten out of it.
+   On a 1440 laptop this resolves to 72 + 1296 + 72. */
+.container {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.containerWide {
+  max-width: calc(var(--container-wide) + var(--gutter) * 2);
+}
+
+.containerText {
+  max-width: calc(var(--container-text) + var(--gutter) * 2);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-padding-block);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  /* Isolates the local theme flip so nested sections do not inherit oddly */
+  isolation: isolate;
+}
+
+.sectionLarge {
+  padding-block: var(--section-padding-block-lg);
+}
+
+.sectionFlush {
+  padding-block: 0;
+}
+
+.sectionDeep {
+  background-color: var(--color-bg-deep);
+}
+
+.sectionSubtle {
+  background-color: var(--color-bg-subtle);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}

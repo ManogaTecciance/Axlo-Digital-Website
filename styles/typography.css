@@ -1,0 +1,191 @@
+/* ==========================================================================
+   Axlo Flow — Typography
+   Sora for display, Inter for everything else. Fluid scale, min body 15px.
+   ========================================================================== */
+
+:root {
+  --text-display-xl: clamp(4rem, 7.4vw, 6.5rem);      /* 64 → 104 */
+  --text-display: clamp(3rem, 5.4vw, 5.25rem);        /* 48 → 84  */
+  --text-h1: clamp(2.625rem, 4.4vw, 4rem);            /* 42 → 64  */
+  --text-h2: clamp(2.75rem, 4vw, 4.5rem);             /* 44 → 72  */
+  --text-h3: clamp(2rem, 2.6vw, 2.5rem);              /* 32 → 40  */
+  --text-title: clamp(1.5rem, 1.9vw, 1.875rem);       /* 24 → 30  */
+  --text-body-lg: 1.125rem;                            /* 18 */
+  --text-body-md: 1.0625rem;                           /* 17 — supporting copy */
+  --text-body: 1rem;                                   /* 16 */
+  --text-body-sm: 0.9375rem;                           /* 15 — body floor */
+  --text-label: 0.875rem;                              /* 14 — tags, eyebrows */
+  --text-caption: 0.8125rem;                           /* 13 — smallest label */
+
+  --leading-display: 1.02;
+  --leading-heading: 1.08;
+  --leading-title: 1.25;
+  --leading-body: 1.6;
+  --leading-tight-body: 1.5;
+
+  --tracking-display: -0.03em;
+  --tracking-heading: -0.02em;
+  --tracking-body: 0;
+  --tracking-eyebrow: 0.16em;
+}
+
+html {
+  font-family: var(--font-body);
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
+  margin: 0;
+  /* Display sizes start at 42–64px. On a 360px screen a single long word can
+     be wider than the whole content column, so headings are allowed to break
+     rather than push the page into horizontal scroll. */
+  overflow-wrap: break-word;
+}
+
+h1 {
+  font-size: var(--text-h1);
+}
+h2 {
+  font-size: var(--text-h2);
+}
+h3 {
+  font-size: var(--text-h3);
+}
+h4 {
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+}
+h5,
+h6 {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ---- Utility type classes (composed with `composes` in CSS Modules) ------ */
+
+.u-display-xl,
+.u-display,
+.u-h1,
+.u-h2,
+.u-h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.u-display-xl {
+  font-size: var(--text-display-xl);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.u-display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.u-h1 {
+  font-size: var(--text-h1);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+.u-h2 {
+  font-size: var(--text-h2);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+.u-h3 {
+  font-size: var(--text-h3);
+  line-height: var(--leading-heading);
+}
+
+.u-title {
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+  font-weight: 600;
+}
+
+.u-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.u-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.u-body-sm {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-tight-body);
+}
+
+.u-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.u-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Numeric label used for section / stage indices (01, 02, …) */
+.u-index {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* Gradient text — display type only, never body copy. Falls back to solid
+   colour where background-clip is unsupported. */
+.u-gradient-text {
+  color: var(--color-accent);
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .u-gradient-text {
+    background: var(--gradient-flow);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

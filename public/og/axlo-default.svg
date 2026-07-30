@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Axlo Digital — Connected technology. Faster business.">
+  <title>Axlo Digital — Connected technology. Faster business.</title>
+  <defs>
+    <linearGradient id="ogFlow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D4C7"/>
+      <stop offset="55%" stop-color="#54E58B"/>
+      <stop offset="100%" stop-color="#C7FF3D"/>
+    </linearGradient>
+    <radialGradient id="ogGlow" cx="72%" cy="24%" r="58%">
+      <stop offset="0%" stop-color="#00D4C7" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#00D4C7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0B1220"/>
+  <rect width="1200" height="630" fill="url(#ogGlow)"/>
+
+  <!-- Connected modules -->
+  <g opacity="0.5">
+    <rect x="742" y="150" width="150" height="76" rx="10" fill="#121D2B" stroke="#2A3A4A"/>
+    <rect x="742" y="286" width="180" height="96" rx="10" fill="#1A2635" stroke="#425466"/>
+    <rect x="742" y="440" width="140" height="70" rx="10" fill="#121D2B" stroke="#2A3A4A"/>
+    <rect x="962" y="220" width="150" height="80" rx="10" fill="#121D2B" stroke="#2A3A4A"/>
+    <rect x="962" y="368" width="150" height="80" rx="10" fill="#121D2B" stroke="#2A3A4A"/>
+    <path d="M892 188 H932 V334 H742" stroke="#00D4C7" stroke-width="2" fill="none" stroke-dasharray="6 9"/>
+    <path d="M922 334 H962 V260" stroke="#00D4C7" stroke-width="2" fill="none" stroke-dasharray="6 9"/>
+    <path d="M922 334 H962 V408" stroke="#00D4C7" stroke-width="2" fill="none" stroke-dasharray="6 9"/>
+    <path d="M882 475 H932 V334" stroke="#00D4C7" stroke-width="2" fill="none" stroke-dasharray="6 9"/>
+  </g>
+
+  <!-- The Axlo diagonal -->
+  <path d="M640 630 L1010 0 h70 L710 630 Z" fill="url(#ogFlow)" opacity="0.42"/>
+
+  <text x="88" y="132" font-family="Inter, sans-serif" font-size="22" font-weight="500" letter-spacing="4" fill="#8C9AA7">ACCELERATED EXPERIENCES. LINKED OPERATIONS.</text>
+
+  <text x="84" y="286" font-family="Sora, Inter, sans-serif" font-size="76" font-weight="600" fill="#F8FAFC">Connected technology.</text>
+  <text x="84" y="374" font-family="Sora, Inter, sans-serif" font-size="76" font-weight="600" fill="#F8FAFC">Faster business.</text>
+
+  <text x="88" y="452" font-family="Inter, sans-serif" font-size="26" fill="#C4CED6">Product strategy · Design systems · Engineering · AI</text>
+
+  <g>
+    <text x="88" y="556" font-family="Sora, Inter, sans-serif" font-size="40" font-weight="600" letter-spacing="4" fill="#F8FAFC">AXLO</text>
+    <path d="M198 518h18l-56 60h-18l56-60Z" fill="url(#ogFlow)"/>
+    <text x="240" y="556" font-family="Inter, sans-serif" font-size="18" font-weight="500" letter-spacing="10" fill="#00D4C7">DIGITAL</text>
+  </g>
+</svg>

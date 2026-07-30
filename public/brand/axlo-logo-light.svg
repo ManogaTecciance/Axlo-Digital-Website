@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 591.26 196.43">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        letter-spacing: 1.03em;
+      }
+
+      .cls-3 {
+        letter-spacing: 1.12em;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        fill: #00d3c7;
+        font-family: Lufga-Regular, Lufga;
+        font-size: 33.48px;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="217.94" y1="188.73" x2="217.94" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c7ff3d" stop-opacity="0"/>
+      <stop offset=".3" stop-color="#c7ff3d"/>
+      <stop offset=".5" stop-color="#00d4c7"/>
+      <stop offset=".7" stop-color="#00d4c7"/>
+      <stop offset="1" stop-color="#00d4c7" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <path class="cls-4" d="M591.25,77.87c.66,26.92-19.28,48.5-45.94,48.54-21.08.03-41.71.73-62.71-.33-25.31-1.28-41.63-23.58-42.13-47.62s16.37-47.01,42.27-47.09l62.58-.2c25.87-.08,45.3,20.63,45.94,46.7ZM543.91,108.08c17.4.01,29.09-14.38,28.55-30.14s-12.66-28.32-29.1-28.21l-57.28.39c-16.08.11-26.93,14.82-26.2,30.12s11.43,27.8,26.77,27.81l57.26.03Z"/>
+      <path class="cls-4" d="M156.85,115.81l-12.99,10.63-75.12-.08,15.7-22.68,34.31-.2-38.68-47.95L25.05,126.41l-25.05-.12L68.24,36.58c3.02-4.01,7.21-6.53,11.63-6.71,4.93-.21,9.53,2.07,12.87,6.22l64.11,79.71Z"/>
+      <path class="cls-4" d="M435.62,108.27l.12,18.23h-58.04c-20.73,0-39.37-12.76-40.05-34.1V31.26s23.17-.03,23.17-.03l.02,58.19c.33,12.08,10.58,18.15,22.8,19.01l51.99-.15Z"/>
+      <text class="cls-5" transform="translate(239.5 188.82)"><tspan class="cls-3" x="0" y="0">DIGI</tspan><tspan class="cls-2" x="218.23" y="0">T</tspan><tspan class="cls-3" x="272.39" y="0">AL</tspan></text>
+      <g>
+        <polygon class="cls-4" points="230.15 55.76 211.02 71.28 163.61 30.17 200.43 30.22 230.15 55.76"/>
+        <polygon class="cls-4" points="245.64 101.39 264.77 85.87 312.25 127.1 275.31 127.04 245.64 101.39"/>
+        <polygon class="cls-1" points="318.23 0 78.05 188.68 115.4 188.73 357.84 .06 318.23 0"/>
+      </g>
+    </g>
+  </g>
+</svg>

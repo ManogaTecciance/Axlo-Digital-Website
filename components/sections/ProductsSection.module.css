@@ -1,0 +1,9 @@
+/* Section 03 — Products. The intro ladder lives in SectionHeader; the panels
+   live in ProductShowcase. This file only owns the gap between the two
+   products, which is the one thing that belongs to the section itself. */
+
+.products {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3.5rem, 6vw, 5.5rem);
+}
