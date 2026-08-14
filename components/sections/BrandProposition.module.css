@@ -1,0 +1,745 @@
+/* ==========================================================================
+   Section 02 — How we work
+
+   A connected flow system, not a timeline. Four stages step upward from left
+   to right; one ribbon runs through them, entering as an aqua signal and
+   closing as a feedback loop inside the Evolve figure.
+
+   The section is budgeted to land inside a 1440 × 900 viewport:
+   ~144px padding + ~243px introduction + ~56px gap + ~410px flow zone.
+   If the copy grows, tighten the copy rather than the section.
+   ========================================================================== */
+
+/* Shares the site container's measure and stepped gutter rather than carrying
+   its own, so this band lines up with every other section on the page. */
+.inner {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: var(--section-padding-block-lg);
+}
+
+/* ---- Introduction ------------------------------------------------------- */
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .intro {
+    grid-template-columns: minmax(0, 58fr) minmax(0, 36fr);
+    gap: 6%;
+    align-items: start;
+  }
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.eyebrowRule {
+  width: 2.25rem;
+  height: 2px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    var(--gradient-flow-stop-1) 0%,
+    var(--gradient-flow-stop-3) 100%
+  );
+}
+
+.statement {
+  margin-top: var(--flow-eyebrow-heading);
+  font-family: var(--font-display);
+  font-size: clamp(2.625rem, 7.5vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
+  font-weight: 600;
+  color: var(--color-text);
+  text-wrap: initial;
+}
+
+@media (min-width: 768px) {
+  .statement {
+    /* Held just under the hero headline's ramp so the fold keeps the loudest
+       line on the page. */
+    font-size: clamp(3.25rem, 4.5vw, 4.5rem); /* 52 → 72 */
+    line-height: 1;
+  }
+}
+
+/* "connected ecosystem" is filled with the flow gradient.
+   This only works because the site is dark: against midnight, Flow Aqua runs
+   10:1 and Volt Lime 16:1, so every stop clears AA comfortably. The same
+   treatment on the old white background sat at ~1.5:1 and had to be demoted
+   to an underline.
+
+   `color` is the fallback, not decoration — if `background-clip: text` is
+   unsupported the words render in Flow Aqua rather than disappearing. */
+.statementMark {
+  color: var(--gradient-flow-stop-1);
+  background-image: linear-gradient(
+    100deg,
+    var(--gradient-flow-stop-1) 0%,
+    var(--gradient-flow-stop-2) 52%,
+    var(--gradient-flow-stop-3) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .statementMark {
+    color: transparent;
+  }
+}
+
+.introAside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .introAside {
+    /* Sits against the top of the heading, never centred against it. */
+    padding-top: var(--space-8);
+  }
+}
+
+.supporting {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 34ch;
+}
+
+@media (min-width: 1024px) {
+  .supporting {
+    max-width: 30ch;
+  }
+}
+
+.flowLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-5);
+  border-top: var(--border-hairline) solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+}
+
+.flowLabelItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flowLabelArrow {
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   Flow zone
+   ========================================================================== */
+
+/* One step of the climb. The ribbon's viewBox height is 3 × this value in
+   user units and its rendered height is 3 × this value in pixels, so a
+   module raised by `(3 − index) × --rise` meets the ribbon's level for that
+   stage exactly. Change this and both sides move together. */
+.flow {
+  --rise: 0rem;
+  position: relative;
+  margin-top: var(--space-10);
+}
+
+@media (min-width: 1024px) {
+  .flow {
+    --rise: 1.5rem;
+    margin-top: clamp(2.75rem, 4vw, 3.5rem);
+  }
+}
+
+.ribbon {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .ribbon {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    width: 100%;
+    height: calc(3 * var(--rise));
+    overflow: visible;
+  }
+}
+
+.ribbonBase {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 2;
+}
+
+.ribbonFlow {
+  fill: none;
+  stroke: url(#axlo-flow-ribbon);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* The hovered stage's run of the ribbon, laid over the resting stroke — one
+   pixel heavier than the resting line, not a different object. */
+.ribbonSegment {
+  fill: none;
+  stroke: url(#axlo-flow-ribbon);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity var(--duration-component) var(--ease-flow);
+}
+
+.ribbonSegment[data-lit='true'] {
+  opacity: 0.9;
+}
+
+/* Where the signal enters the system. */
+.ribbonSource {
+  fill: var(--gradient-flow-stop-1);
+}
+
+/* ---- Modules ------------------------------------------------------------ */
+
+/* Column gap is zero at every width so each module's left edge lands on an
+   exact quarter of the ribbon; the reading gutter comes from the module's own
+   padding instead. */
+.modules {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-12);
+  list-style: none;
+}
+
+/* Mobile spine — the flow, on the axis the page actually scrolls. */
+.modules::before {
+  content: '';
+  position: absolute;
+  left: 0.3125rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    var(--gradient-flow-stop-1) 0%,
+    var(--gradient-flow-stop-2) 55%,
+    var(--gradient-flow-stop-3) 100%
+  );
+  opacity: 0.55;
+}
+
+@media (min-width: 768px) {
+  .modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0;
+    row-gap: var(--space-16);
+  }
+
+  .modules::before {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .modules {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.module {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-left: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .module {
+    padding-left: var(--space-6);
+    padding-right: var(--space-8);
+    padding-top: var(--space-8);
+    border-left: var(--border-hairline) solid var(--color-border);
+  }
+
+  /* The tablet connector: with a zero column gap, each module's top rule
+     meets its neighbour's and the row reads as one line. */
+  .module::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -1px;
+    right: 0;
+    height: 2px;
+    background-color: var(--color-border);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The climb. Stage 0 sits lowest, stage 3 highest — same step the ribbon
+     takes, so every module's top-left corner meets the stroke. */
+  .module {
+    margin-top: calc((3 - var(--stage-index)) * var(--rise));
+  }
+
+  .module::before {
+    /* The ribbon is the connector from here up. */
+    display: none;
+  }
+
+  /* Alternating translucent panels break the four-column rhythm without
+     turning the stages into cards. */
+  .module:nth-child(even) {
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 212, 199, 0.05) 0%,
+      rgba(0, 212, 199, 0) 62%
+    );
+  }
+}
+
+/* ---- Node --------------------------------------------------------------- */
+
+.node {
+  position: absolute;
+  top: 0.35rem;
+  left: 0;
+  z-index: 2;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  background-color: var(--color-bg);
+  transition: transform var(--duration-component) var(--ease-flow),
+    box-shadow var(--duration-component) var(--ease-flow);
+}
+
+/* Centred on the connector with `translate`, so the hover scale composes with
+   the centring rather than overwriting it. */
+@media (min-width: 768px) {
+  .node {
+    top: 0;
+    left: -1px;
+    translate: 0 -50%;
+  }
+}
+
+.module[data-active] .node {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 6px rgba(0, 212, 199, 0.12);
+}
+
+/* ---- Module copy -------------------------------------------------------- */
+
+.moduleHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.moduleIndex {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 2.9vw, 2.875rem); /* 40 → 46 */
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  /* Exposed text, so it is held at #7E8A94 — 3.5:1 on white, clearing AA for
+     large text. A paler tint would read better as a watermark and fail. */
+  color: var(--color-text-muted);
+  transition: color var(--duration-component) var(--ease-flow);
+}
+
+.module[data-active] .moduleIndex {
+  color: var(--color-accent);
+}
+
+.moduleName {
+  font-family: var(--font-display);
+  font-size: var(--text-title); /* 24 → 30 */
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color var(--duration-component) var(--ease-flow);
+}
+
+/* Flow Aqua, not Kinetic Teal: on midnight the deep teal sits at ~2.8:1, which
+   is under AA even for large text. The aqua clears 9:1 and is the same brand
+   step the ribbon uses at its source. */
+.module[data-active] .moduleName {
+  color: var(--color-accent);
+}
+
+.moduleLead {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 30ch;
+}
+
+.moduleDetail {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================================
+   Stage diagrams
+   ========================================================================== */
+
+.diagram {
+  width: 100%;
+  max-width: 13.5rem;
+  margin-block: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-hairline) solid var(--color-border);
+  /* A faint technical grid, not a surface. */
+  background-image:
+    linear-gradient(90deg, rgba(140, 154, 167, 0.14) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(140, 154, 167, 0.14) 1px, transparent 1px);
+  background-size: 12px 12px;
+  transition:
+    border-color var(--duration-component) var(--ease-flow),
+    opacity var(--duration-component) var(--ease-flow);
+}
+
+.module[data-active] .diagram {
+  border-color: var(--color-border-accent);
+}
+
+.diagramSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Shared figure strokes. Everything is drawn, nothing is illustrated. */
+.dFrame,
+.dHair,
+.dStroke,
+.dSpine,
+.dLoop,
+.dHairRing {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dFrame {
+  stroke: var(--color-border);
+  stroke-width: 1.25;
+}
+
+.dHair,
+.dHairRing {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.dStroke {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+}
+
+.dSpine {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  opacity: 0.45;
+}
+
+.dLoop {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+}
+
+.dDot {
+  fill: var(--color-accent);
+}
+
+.dHairDot {
+  fill: var(--cloud-300);
+}
+
+.dNode {
+  fill: var(--gradient-flow-stop-1);
+}
+
+.dPulse {
+  fill: var(--gradient-flow-stop-3);
+  stroke: var(--color-accent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.dCell {
+  fill: rgba(0, 212, 199, 0.1);
+  stroke: var(--color-border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Figure motion. Each group moves the way its stage does, and only while the
+   stage is engaged — nothing here loops. */
+.dPoints,
+.dRays,
+.dArrow,
+.dCells,
+.dLayer,
+.dLoop,
+.dSignal {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform var(--duration-reveal) var(--ease-flow),
+    opacity var(--duration-reveal) var(--ease-flow);
+}
+
+.dRays {
+  opacity: 0.55;
+}
+
+/* 01 — the scattered observations resolve toward the direction. */
+.module[data-active] .dPoints {
+  transform: translateX(4px);
+}
+.module[data-active] .dRays {
+  opacity: 1;
+}
+.module[data-active] .dArrow {
+  transform: translateX(3px);
+}
+
+/* 02 — the interface regions come up together. */
+.dCells {
+  opacity: 0.7;
+}
+.module[data-active] .dCells {
+  opacity: 1;
+  transform: scale(1.03);
+}
+
+/* 03 — the layers separate along the system line. */
+.module[data-active] .dLayer {
+  transform: translateX(calc(var(--layer) * -2.5px));
+}
+
+/* 04 — the loop turns and the signal steps up. */
+.module[data-active] .dLoop {
+  transform: rotate(72deg);
+}
+.module[data-active] .dSignal {
+  transform: translate(2px, -2px);
+}
+
+/* ---- De-emphasis -------------------------------------------------------- */
+
+/* Only the figure dims on the stages you are not pointing at — it is the
+   loudest element in a module and decorative, so losing it is enough to shift
+   emphasis. Every piece of text keeps full contrast: fading the copy or the
+   numerals would push them under AA for the three stages you are not reading,
+   and de-emphasis is not worth making content unreadable. */
+.flow[data-engaged='true'] .module:not([data-active]) .diagram {
+  opacity: 0.42;
+}
+
+/* ==========================================================================
+   Entrance sequence
+
+   Keyed off `[data-sequence]` on the section wrapper, which is 'shown' on the
+   server and only becomes 'pending' after hydration, and only for a section
+   still below the fold. Nothing is ever hidden without JavaScript.
+
+   Order: heading → ribbon draws in → Think, Design, Build, Evolve activate in
+   turn as the signal reaches them.
+   ========================================================================== */
+
+[data-sequence='pending'] .eyebrow,
+[data-sequence='pending'] .statement,
+[data-sequence='pending'] .introAside,
+[data-sequence='pending'] .moduleHead,
+[data-sequence='pending'] .moduleLead,
+[data-sequence='pending'] .diagram,
+[data-sequence='pending'] .moduleDetail {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+}
+
+[data-sequence='pending'] .node {
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+[data-sequence='pending'] .ribbonFlow {
+  stroke-dashoffset: 1;
+}
+
+[data-sequence='pending'] .ribbonSource {
+  opacity: 0;
+}
+
+[data-sequence='shown'] .eyebrow,
+[data-sequence='shown'] .statement,
+[data-sequence='shown'] .introAside,
+[data-sequence='shown'] .node,
+[data-sequence='shown'] .moduleHead,
+[data-sequence='shown'] .moduleLead,
+[data-sequence='shown'] .diagram,
+[data-sequence='shown'] .moduleDetail,
+[data-sequence='shown'] .ribbonSource {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 480ms var(--ease-flow) var(--sequence-delay, 0ms),
+    transform 480ms var(--ease-flow) var(--sequence-delay, 0ms);
+}
+
+[data-sequence='shown'] .introAside {
+  --sequence-delay: 140ms;
+}
+
+[data-sequence='shown'] .ribbonSource {
+  --sequence-delay: 260ms;
+}
+
+/* The signal runs the length of the ribbon before the stages light up. */
+[data-sequence='shown'] .ribbonFlow {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1100ms var(--ease-flow) 300ms;
+}
+
+[data-sequence='shown'] .node {
+  --sequence-delay: calc(460ms + var(--stage-index, 0) * 170ms);
+}
+
+[data-sequence='shown'] .moduleHead {
+  --sequence-delay: calc(520ms + var(--stage-index, 0) * 170ms);
+}
+
+[data-sequence='shown'] .moduleLead {
+  --sequence-delay: calc(560ms + var(--stage-index, 0) * 170ms);
+}
+
+[data-sequence='shown'] .diagram {
+  --sequence-delay: calc(600ms + var(--stage-index, 0) * 170ms);
+}
+
+[data-sequence='shown'] .moduleDetail {
+  --sequence-delay: calc(640ms + var(--stage-index, 0) * 170ms);
+}
+
+/* ---- Reduced motion ----------------------------------------------------- */
+
+/* The finished state, immediately: no draw, no stagger, no figure motion. The
+   hook already declines to set the pending state, so this is the belt to its
+   braces and also covers the document-level `[data-motion='reduced']` flag. */
+@media (prefers-reduced-motion: reduce) {
+  [data-sequence] .eyebrow,
+  [data-sequence] .statement,
+  [data-sequence] .introAside,
+  [data-sequence] .node,
+  [data-sequence] .moduleHead,
+  [data-sequence] .moduleLead,
+  [data-sequence] .diagram,
+  [data-sequence] .moduleDetail,
+  [data-sequence] .ribbonSource {
+    opacity: 1;
+    transform: none;
+    transition: opacity 120ms linear;
+  }
+
+  [data-sequence] .ribbonFlow {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  .node,
+  .moduleIndex,
+  .moduleName,
+  .diagram,
+  .ribbonSegment,
+  .dPoints,
+  .dRays,
+  .dArrow,
+  .dCells,
+  .dLayer,
+  .dLoop,
+  .dSignal {
+    transition: none;
+  }
+
+  .module[data-active] .dPoints,
+  .module[data-active] .dArrow,
+  .module[data-active] .dCells,
+  .module[data-active] .dLayer,
+  .module[data-active] .dLoop,
+  .module[data-active] .dSignal {
+    transform: none;
+  }
+}
+
+[data-motion='reduced'] [data-sequence] .eyebrow,
+[data-motion='reduced'] [data-sequence] .statement,
+[data-motion='reduced'] [data-sequence] .introAside,
+[data-motion='reduced'] [data-sequence] .node,
+[data-motion='reduced'] [data-sequence] .moduleHead,
+[data-motion='reduced'] [data-sequence] .moduleLead,
+[data-motion='reduced'] [data-sequence] .diagram,
+[data-motion='reduced'] [data-sequence] .moduleDetail,
+[data-motion='reduced'] [data-sequence] .ribbonSource {
+  opacity: 1;
+  transform: none;
+}
+
+[data-motion='reduced'] [data-sequence] .ribbonFlow {
+  stroke-dashoffset: 0;
+  transition: none;
+}
+
+[data-motion='reduced'] .module[data-active] .dPoints,
+[data-motion='reduced'] .module[data-active] .dArrow,
+[data-motion='reduced'] .module[data-active] .dCells,
+[data-motion='reduced'] .module[data-active] .dLayer,
+[data-motion='reduced'] .module[data-active] .dLoop,
+[data-motion='reduced'] .module[data-active] .dSignal {
+  transform: none;
+}

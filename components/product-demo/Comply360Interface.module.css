@@ -1,0 +1,191 @@
+/* ==========================================================================
+   Comply360 — state-specific layout.
+   Shared primitives live in ProductUi.module.css.
+   ========================================================================== */
+
+/* ---- 01 Compliance dashboard -------------------------------------------- */
+
+.readiness {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.ring {
+  flex: none;
+  width: 5rem;
+  height: 5rem;
+  transform: rotate(-90deg);
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--color-surface-interactive);
+  stroke-width: 8;
+}
+
+.ringValue {
+  fill: none;
+  stroke: url(#comply-ring);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.reading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.readingValue {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.readingLabel {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+.readingNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+/* Three across in a narrow frame, stacked beside the ring once the grid has
+   split into two columns. */
+.counters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+@container (min-width: 34rem) {
+  .counters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- 02 Filing workflow ------------------------------------------------- */
+
+/* The stage rail. One connector runs behind the marks; each mark states its
+   own state through fill *and* through a check or an outline, so progress is
+   never carried by colour alone. */
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@container (min-width: 30rem) {
+  .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-top: var(--space-5);
+}
+
+/* The connector, drawn from each step to the next rather than as one absolute
+   bar — so it never runs past the last mark or under the grid's row gap. */
+.step::before {
+  content: '';
+  position: absolute;
+  top: 0.3125rem;
+  left: 0.75rem;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-border);
+}
+
+.step:last-child::before {
+  display: none;
+}
+
+.step[data-state='done']::before {
+  background-color: var(--color-accent);
+}
+
+.stepMark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  background-color: var(--color-bg-deep);
+}
+
+.step[data-state='done'] .stepMark {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+}
+
+.step[data-state='active'] .stepMark {
+  border-color: var(--color-accent);
+  background-color: var(--color-bg-deep);
+  box-shadow: 0 0 0 4px var(--color-action-quiet-bg);
+}
+
+.stepName {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.step[data-state='done'] .stepName,
+.step[data-state='active'] .stepName {
+  color: var(--color-text);
+}
+
+.stepOwner {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.totalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
+
+.totalRow dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.totalRow[data-total='true'] {
+  padding-top: var(--space-2);
+  border-top: var(--border-hairline) solid var(--color-border);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}

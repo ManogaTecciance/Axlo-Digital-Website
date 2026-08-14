@@ -1,0 +1,55 @@
+/* Reduced-motion switch. The theme switcher that used to share this file was
+   removed when the site became dark-only. */
+
+.motionToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--text-body-sm);
+  transition: border-color var(--duration-micro) var(--ease-flow),
+    color var(--duration-micro) var(--ease-flow);
+}
+
+.motionToggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.switchTrack {
+  position: relative;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-interactive);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  flex-shrink: 0;
+  transition: background-color var(--duration-micro) var(--ease-flow);
+}
+
+.motionToggle[aria-pressed='true'] .switchTrack {
+  background-color: var(--color-action);
+  border-color: var(--color-action);
+}
+
+.switchThumb {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  background-color: var(--color-text);
+  transform: translateY(-50%);
+  transition: transform var(--duration-micro) var(--ease-flow);
+}
+
+.motionToggle[aria-pressed='true'] .switchThumb {
+  background-color: var(--color-on-action);
+  transform: translate(1rem, -50%);
+}

@@ -1,0 +1,202 @@
+/* Transparent over the hero, then an Axlo Midnight surface with backdrop blur
+   once the page has moved — so the header separates from content it overlaps
+   without ever sitting as a solid bar on the fold. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-text);
+  border-bottom: var(--border-hairline) solid transparent;
+  transition: background-color var(--duration-component) var(--ease-standard),
+    border-color var(--duration-component) var(--ease-standard),
+    box-shadow var(--duration-component) var(--ease-standard),
+    color var(--duration-component) var(--ease-standard);
+}
+
+.scrolled {
+  border-bottom-color: color-mix(in srgb, var(--color-border) 70%, transparent);
+  background-color: color-mix(in srgb, var(--axlo-midnight) 88%, transparent);
+  box-shadow: 0 12px 32px -24px rgba(0, 0, 0, 0.9);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .scrolled {
+    backdrop-filter: blur(18px) saturate(150%);
+    background-color: color-mix(in srgb, var(--axlo-midnight) 76%, transparent);
+  }
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  min-height: var(--header-height);
+}
+
+/* The logo is a real "back to top" link, so it gets a real target: the lockup
+   is 36px tall, which is under the 44px minimum on its own. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  flex-shrink: 0;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Desktop nav -------------------------------------------------------- */
+
+.nav {
+  display: none;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem; /* 15 */
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--duration-micro) var(--ease-flow),
+    background-color var(--duration-micro) var(--ease-flow);
+}
+
+@media (min-width: 1280px) {
+  .navLink {
+    font-size: 1rem; /* 16 */
+    padding-inline: var(--space-5);
+  }
+}
+
+.navLink:hover {
+  color: var(--color-text);
+  background-color: var(--color-action-quiet-bg);
+}
+
+/* Current section: weight + colour + an underline rule. Three signals, so the
+   state never depends on colour alone. The rule is drawn on every link and
+   scaled to zero when inactive, so it grows into place rather than appearing. */
+.navLink::after {
+  content: '';
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: 0.35rem;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-flow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  opacity: 0;
+  transition: transform var(--duration-component) var(--ease-flow),
+    opacity var(--duration-component) var(--ease-flow);
+}
+
+@media (min-width: 1280px) {
+  .navLink::after {
+    left: var(--space-5);
+    right: var(--space-5);
+  }
+}
+
+.navLink[aria-current='true'] {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.navLink[aria-current='true']::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navLink::after {
+    transition: opacity 120ms linear;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Primary CTA — a styled anchor so it works without JavaScript. Mirrors the
+   primary Button at small size. */
+.cta {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.875rem; /* 46 */
+  padding-inline: var(--space-6);
+  border-radius: var(--radius-sm);
+  border: var(--border-hairline) solid transparent;
+  background-color: var(--color-action);
+  color: var(--color-on-action);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px -16px rgba(0, 212, 199, 0.85);
+  transition: background-color var(--duration-micro) var(--ease-flow),
+    box-shadow var(--duration-micro) var(--ease-flow),
+    transform var(--duration-micro) var(--ease-flow);
+}
+
+.cta:hover {
+  background-color: var(--color-action-hover);
+  box-shadow: 0 12px 34px -14px rgba(0, 212, 199, 0.9);
+}
+
+.cta:active {
+  background-color: var(--color-action-pressed);
+  transform: translateY(1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta:active {
+    transform: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    display: flex;
+  }
+  .cta {
+    display: inline-flex;
+  }
+}
+
+/* ---- Progress rail: the flow line, tracking read position --------------- */
+
+.progressRail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  width: 100%;
+  transform-origin: 0 50%;
+  background: var(--gradient-flow);
+}

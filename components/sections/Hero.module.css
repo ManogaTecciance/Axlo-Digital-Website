@@ -1,0 +1,543 @@
+.hero {
+  position: relative;
+  padding-block: calc(var(--header-height) + var(--space-12)) var(--space-16);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    padding-block: calc(var(--header-height) + var(--space-12)) var(--space-20);
+  }
+}
+
+/* A single wide ambient wash, not a glow on every element. Centred behind the
+   headline now that the copy column sits on the page axis. */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -46%;
+  left: 50%;
+  translate: -50% 0;
+  width: min(78rem, 130vw);
+  height: min(78rem, 130vw);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 212, 199, 0.14) 0%,
+    rgba(0, 212, 199, 0.05) 36%,
+    transparent 66%
+  );
+  pointer-events: none;
+}
+
+/* A second, much wider aqua bloom sitting under the composition rather than
+   the headline, so the proof row is lit from behind instead of floating on
+   flat midnight. Low enough that it never lifts the black point of the
+   photograph it sits behind. */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: 50%;
+  translate: -50% 0;
+  width: min(96rem, 150vw);
+  height: min(52rem, 80vw);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(0, 212, 199, 0.1) 0%,
+    rgba(0, 108, 104, 0.06) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* ---- Entrance -----------------------------------------------------------
+   Above the fold, so there is nothing to observe: a keyframe with a per-step
+   delay is the whole sequence. Because CSS animations always run, this cannot
+   strand content the way a JS-gated `opacity: 0` can, and motion.css already
+   collapses it to 0.01ms under either reduced-motion signal. */
+
+.hero [data-hero-step] {
+  animation: axlo-fade-up 620ms var(--ease-flow) both;
+  animation-delay: var(--hero-step-delay, 0ms);
+}
+
+.copy > [data-hero-step]:nth-child(2) {
+  --hero-step-delay: 90ms;
+}
+.copy > [data-hero-step]:nth-child(3) {
+  --hero-step-delay: 180ms;
+}
+.copy > [data-hero-step]:nth-child(4) {
+  --hero-step-delay: 260ms;
+}
+.mosaic {
+  --hero-step-delay: 340ms;
+}
+
+/* ---- Copy --------------------------------------------------------------- */
+
+.copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  /* Wide enough that the headline's first authored line holds on one row at
+     every width from 1024 up, including 1600 and 1920 where the ramp reaches
+     its 76px cap and needs ~1356px. The measure is set by the headline, not by
+     a conservative reading column — see the spec-conflict note in
+     docs/website-premium-refinement-plan.md §3. */
+  max-width: 88rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* The headline holds its two authored lines from roughly 900px upward. The
+   desktop ramp is bounded at 54–76px so a 1366 and a 1440 laptop both land in
+   the brief's range instead of the viewport-width clamp overshooting. */
+.headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 3.25rem); /* 40 mobile → 52 tablet */
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  white-space: pre-line;
+  text-wrap: balance;
+}
+
+/* The slope hits every band the brief specifies, and the two authored lines
+   still hold: the longest line measures ~17.8× the font size in Sora 600, so
+   4.72vw lands inside the container's measure at every step.
+     1024 → 50px (tablet 48–58)   1366 → 64px (laptop 58–68)
+     1440 → 68px (desktop 68–76)  1600+ → 76px cap */
+@media (min-width: 1024px) {
+  .headline {
+    font-size: clamp(3.125rem, 4.72vw, 4.75rem); /* 50 → 76 */
+    line-height: 0.99;
+  }
+}
+
+/* 18px at a 640px cap — the brief's measure, expressed in rem so it holds when
+   the visitor scales their root font rather than snapping at a pixel value. */
+.supporting {
+  margin-top: var(--space-3);
+  font-size: var(--text-body-lg);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 40rem;
+  text-wrap: pretty;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+/* ---- Mosaic ------------------------------------------------------------- */
+
+/* Mobile stacks; the row only pairs up once the quote has width for a
+   sensible measure alongside the system render. */
+.mosaic {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* 67 / 33 with both tiles on one row height, so their top and bottom edges
+   line up exactly rather than each tile sizing itself. The row is ~12% taller
+   than it was: the composition is the proof, and it was reading as a strip
+   under the headline rather than as the second half of the fold. */
+@media (min-width: 1024px) {
+  .mosaic {
+    grid-template-columns: minmax(0, 67fr) minmax(0, 33fr);
+    grid-auto-rows: clamp(29rem, 34.5vw, 38rem);
+    gap: var(--space-5);
+  }
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: var(--border-hairline) solid var(--color-border);
+  background-color: var(--color-surface);
+  isolation: isolate;
+  transition: border-color var(--duration-component) var(--ease-flow),
+    box-shadow var(--duration-component) var(--ease-flow),
+    transform var(--duration-component) var(--ease-flow);
+}
+
+/* Soft illumination on approach — the panel acknowledges the pointer without
+   moving under it. */
+.tile:hover {
+  border-color: var(--color-border-accent);
+  box-shadow: 0 24px 70px -40px rgba(0, 212, 199, 0.55);
+}
+
+/* Pointer depth. The two tiles travel by different fractions of the same
+   published value, which is what makes the pair read as layers rather than as
+   one sheet sliding. `transform` only — never layout. */
+@media (min-width: 1024px) {
+  .mosaic[data-depth='on'] .tileWide {
+    transform: translate3d(
+      calc(var(--depth-x, 0) * var(--depth-travel, 8px)),
+      calc(var(--depth-y, 0) * var(--depth-travel, 8px) * 0.5),
+      0
+    );
+  }
+
+  .mosaic[data-depth='on'] .quoteTile {
+    transform: translate3d(
+      calc(var(--depth-x, 0) * var(--depth-travel, 8px) * -0.55),
+      calc(var(--depth-y, 0) * var(--depth-travel, 8px) * -0.3),
+      0
+    );
+  }
+}
+
+/* The scrim is the tile's own layer rather than a filter on the image, so the
+   photograph keeps its contrast and only the text area darkens. */
+.tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 16, 28, 0.72) 0%,
+    rgba(7, 16, 28, 0.18) 42%,
+    rgba(7, 16, 28, 0.82) 100%
+  );
+  pointer-events: none;
+}
+
+.tileImage {
+  object-fit: cover;
+  filter: var(--image-filter);
+}
+
+/* ---- The operational data path joining the two tiles -------------------- */
+
+/* One short stroke across the gap at the height of the image tile's copy, with
+   a node on it and a single packet travelling it: the two blocks read as one
+   system — output leaving the render and arriving at the statement — rather
+   than as two cards that happen to be adjacent. Desktop only; on a stacked
+   layout there is no gap for it to cross. */
+.mosaicFlow {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .mosaicFlow {
+    display: block;
+    position: absolute;
+    top: 4.75rem;
+    /* Spans the column boundary rather than trying to land on it: the exact
+       gap position depends on the fr split, and the line only needs to read as
+       crossing from one tile into the other, not as a rule ruled across the
+       quote. */
+    left: 54%;
+    right: 26%;
+    height: 2px;
+    z-index: 3;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 212, 199, 0) 0%,
+      var(--gradient-flow-stop-1) 34%,
+      var(--gradient-flow-stop-2) 72%,
+      rgba(199, 255, 61, 0) 100%
+    );
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .mosaicFlow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 52%;
+    width: 0.5rem;
+    height: 0.5rem;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background-color: var(--gradient-flow-stop-1);
+  }
+
+  /* One packet, crossing slowly. Painted as a background dot and travelled
+     with `background-position`, so its distance is the path's own width at any
+     viewport and no length has to be hard-coded. A 5s pass with a pause
+     between runs — present enough to say the path is live, quiet enough to sit
+     beside body copy without pulling the eye off it. */
+  .mosaicPacket {
+    position: absolute;
+    inset: -0.125rem 0;
+    background-image: radial-gradient(
+      circle,
+      var(--gradient-flow-stop-3) 0 40%,
+      rgba(199, 255, 61, 0.28) 55%,
+      transparent 70%
+    );
+    background-repeat: no-repeat;
+    background-size: 0.625rem 0.625rem;
+    background-position: 0% 50%;
+    animation: axlo-hero-packet 5.2s var(--ease-standard) 1.4s infinite;
+  }
+}
+
+@keyframes axlo-hero-packet {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0;
+  }
+  12%,
+  62% {
+    opacity: 1;
+  }
+  74%,
+  100% {
+    background-position: 100% 50%;
+    opacity: 0;
+  }
+}
+
+/* The path holds, the packet stops. Motion.css already flattens the duration;
+   this removes the element so nothing sits mid-flight. */
+@media (prefers-reduced-motion: reduce) {
+  .mosaicPacket {
+    display: none;
+  }
+}
+
+[data-motion='reduced'] .mosaicPacket {
+  display: none;
+}
+
+/* ---- Wide tile: one unified image tile (image + overlay + copy) --------- */
+
+/* One rounded, clipped container. The image and the Axlo colour-grading
+   overlay both fill it; the copy sits over both at the top-left. */
+.tileWide {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Switch off the shared full-cover scrim — this tile uses its own gradient
+   overlay. The quote tile keeps the shared scrim. */
+.tileWide::after {
+  content: none;
+}
+
+@media (min-width: 768px) {
+  .tileWide {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tileWide {
+    /* The grid row sets the height; both tiles fill it. */
+    aspect-ratio: auto;
+    height: 100%;
+  }
+}
+
+.quoteTile {
+  align-items: stretch;
+  min-height: 18rem;
+}
+
+@media (min-width: 1024px) {
+  .quoteTile {
+    min-height: 0;
+    height: 100%;
+  }
+}
+
+/* The image fills the tile; object-fit keeps it undistorted and sharp. On
+   mobile the crop biases toward the layered panels — the subject of the frame. */
+.tileWide .tileImage {
+  object-position: center;
+}
+
+@media (max-width: 767px) {
+  .tileWide .tileImage {
+    object-position: 62% center;
+  }
+}
+
+/* Axlo colour-grading overlay — strongest (near-midnight) behind the top-left
+   copy, easing to a light aqua/lime wash toward the right and bottom. The whole
+   layer sits at 60% so the image reads through it. */
+.tileOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.6;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    rgba(11, 18, 32, 0.92) 0%,
+    rgba(0, 108, 104, 0.78) 34%,
+    rgba(0, 212, 199, 0.42) 62%,
+    rgba(199, 255, 61, 0.18) 100%
+  );
+}
+
+/* A second, tighter scrim under the copy only. The graded overlay alone sat at
+   the same strength across the whole frame; this concentrates the darkening
+   where the text actually is, so the title holds while the right-hand two
+   thirds of the photograph stay clearly visible. */
+.tileScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(7, 16, 28, 0.62) 0%,
+    rgba(7, 16, 28, 0.34) 38%,
+    rgba(7, 16, 28, 0) 66%
+  );
+}
+
+/* Below the two-column layout the tile is portrait, and a 110° gradient runs
+   out of darkness before it reaches the right-hand edge of the copy — the
+   heading ends up white on a bright photograph. Both layers turn vertical
+   there, so the darkening sits over the copy at the top and the lower two
+   thirds of the frame stay clearly legible as an image. */
+@media (max-width: 1023px) {
+  .tileOverlay {
+    background: linear-gradient(
+      180deg,
+      rgba(11, 18, 32, 0.95) 0%,
+      rgba(0, 108, 104, 0.66) 34%,
+      rgba(0, 212, 199, 0.3) 68%,
+      rgba(199, 255, 61, 0.16) 100%
+    );
+  }
+
+  .tileScrim {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 16, 28, 0.74) 0%,
+      rgba(7, 16, 28, 0.42) 46%,
+      rgba(7, 16, 28, 0) 78%
+    );
+  }
+}
+
+/* Copy over the image, top-left. Padding eases from ~20px (mobile) to ~44px
+   (desktop); `right` + `max-width` keep it from overflowing on narrow screens. */
+.tileCopy {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1.25rem, 3.5vw, 2.75rem);
+  left: clamp(1.25rem, 3.5vw, 2.75rem);
+  right: clamp(1.25rem, 3.5vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 30rem;
+}
+
+.tileTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.625rem, 2.6vw, 2.625rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--pure-white);
+  text-shadow: 0 1px 16px rgba(7, 16, 28, 0.72);
+}
+
+.tileLead {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--cloud-100);
+  max-width: 32ch;
+  text-shadow: 0 1px 10px rgba(7, 16, 28, 0.7);
+}
+
+/* ---- Quote tile --------------------------------------------------------- */
+
+/* The photograph here is texture, not content: heavily dimmed and blurred so
+   the statement stays legible at every viewport. */
+.quoteImage {
+  opacity: 0.28;
+  filter: blur(2px) saturate(0.8) brightness(0.7);
+}
+
+.quoteTile::after {
+  background: linear-gradient(
+    155deg,
+    rgba(0, 108, 104, 0.82) 0%,
+    rgba(7, 16, 28, 0.9) 62%,
+    rgba(7, 16, 28, 0.96) 100%
+  );
+}
+
+.quote {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  margin: 0;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .quote {
+    padding: var(--space-8) var(--space-7);
+  }
+}
+
+.quoteMark {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  line-height: 0.7;
+  color: var(--color-accent);
+}
+
+.quoteText {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.7vw, 1.75rem); /* 22 → 28 */
+  line-height: 1.34;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  color: var(--ink-050);
+  text-wrap: pretty;
+  /* Pushes the attribution to the foot of the card at desktop heights. */
+  margin-bottom: auto;
+}
+
+.quoteFooter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-top: var(--space-5);
+  border-top: var(--border-hairline) solid rgba(196, 206, 214, 0.16);
+}
+
+.quoteName {
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.quoteRole {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,31 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  text-decoration: none;
+  line-height: 0;
+  color: var(--color-text);
+}
+
+/* `size` sets the rendered height; the explicit aspect ratio pins the width so
+   the box can never collapse inside a flex/grid parent (which a bare
+   `width: auto` can, in some engines). */
+.art {
+  display: block;
+  flex: none;
+  height: var(--logo-size, 1.875rem);
+  width: auto;
+  aspect-ratio: 591.26 / 196.43;
+  /* Override the global `svg { max-width: 100% }` so a narrow fit-content
+     wrapper never clips the lockup. */
+  max-width: none;
+}
+
+/* "DIGITAL" is live text in the source artwork — render it in the site font
+   (the file references a font that isn't web-available) and in the brand
+   accent, so it stays consistent and crisp. */
+.sub {
+  font-family: var(--font-body);
+  font-size: 33.48px;
+  fill: var(--color-accent);
+}

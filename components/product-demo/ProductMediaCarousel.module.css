@@ -1,0 +1,242 @@
+/* ==========================================================================
+   Product state carousel
+
+   Every state occupies the same grid cell, so the viewport is as tall as the
+   tallest state and nothing below it can shift as the carousel moves. That is
+   the whole layout-stability strategy — there is no reserved box to compute
+   and no image whose height has to be guessed before it loads.
+   ========================================================================== */
+
+.carousel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.viewport {
+  display: grid;
+  touch-action: pan-y;
+}
+
+/* Every state fills the cell, which is as tall as the tallest of them. The
+   window therefore keeps one size across all three views — the way a real
+   application's window does not resize when you change screen — instead of the
+   frame shrinking and leaving a gap under the shorter states. */
+.slide {
+  grid-area: 1 / 1;
+  align-self: stretch;
+  min-width: 0;
+  transition:
+    opacity 560ms var(--ease-flow),
+    transform 560ms var(--ease-flow),
+    visibility 0s linear 560ms;
+}
+
+.slide[data-active='false'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* A small horizontal displacement and a hair of scale — 1.02 at most, so a
+     state reads as sliding into place rather than zooming. */
+  transform: translate3d(2.5%, 0, 0) scale(0.985);
+}
+
+.slide[data-active='false'][data-direction='back'] {
+  transform: translate3d(-2.5%, 0, 0) scale(0.985);
+}
+
+.slide[data-active='true'] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 560ms var(--ease-flow),
+    transform 560ms var(--ease-flow),
+    visibility 0s;
+}
+
+/* Reduced motion: a short crossfade, no displacement, no scale. */
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transform: none !important;
+    transition: opacity 120ms linear, visibility 0s linear 120ms;
+  }
+  .slide[data-active='true'] {
+    transition: opacity 120ms linear, visibility 0s;
+  }
+}
+
+[data-motion='reduced'] .slide {
+  transform: none !important;
+}
+
+/* Caption + live region ----------------------------------------------------*/
+
+.caption {
+  min-height: 3em;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+  animation: axlo-caption-in 320ms var(--ease-flow) both;
+}
+
+@keyframes axlo-caption-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@container (min-width: 40rem) {
+  .caption {
+    min-height: 2em;
+  }
+}
+
+/* Visually hidden but announced. */
+.live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Controls -----------------------------------------------------------------*/
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.controlGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-micro) var(--ease-flow),
+    color var(--duration-micro) var(--ease-flow),
+    background-color var(--duration-micro) var(--ease-flow);
+}
+
+.control svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.control:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.control:active {
+  background-color: var(--color-surface-interactive);
+}
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-right: auto;
+}
+
+/* A real 44px target with a small visible pip inside — the active dot is wider
+   as well as filled, so state is never carried by colour alone. */
+.dot {
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  translate: -50% -50%;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-border-strong);
+  transition:
+    width var(--duration-component) var(--ease-flow),
+    background-color var(--duration-component) var(--ease-flow);
+}
+
+.dot:hover::before {
+  background-color: var(--color-text-secondary);
+}
+
+.dot[data-active='true']::before {
+  width: 1.5rem;
+  background-color: var(--color-accent);
+}
+
+.position {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.counter {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* The active state's short name. Hidden on the narrowest screens where the
+   control row has to stay on one line. */
+.stateLabel {
+  display: none;
+  padding-left: var(--space-3);
+  border-left: var(--border-hairline) solid var(--color-border);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+@media (min-width: 480px) {
+  .stateLabel {
+    display: inline;
+  }
+}
+
+/* Focus is visible on every control. */
+.control:focus-visible,
+.dot:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

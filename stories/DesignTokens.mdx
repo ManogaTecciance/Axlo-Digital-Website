@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Foundations/Design tokens" />
+
+# Axlo Flow — design tokens
+
+Two layers, always.
+
+**Primitives** (`styles/tokens.css`) hold raw brand values: `--flow-aqua`, `--axlo-midnight`,
+spacing, radii, easing. Components must never reference these directly.
+
+**Semantics** (`styles/light-theme.css`, `styles/dark-theme.css`) express intent:
+`--color-surface`, `--color-border-strong`, `--color-action`, `--color-on-accent`. Components
+consume only these. This is what makes a second theme possible without forking a single
+component — and it is the difference between an authored dark mode and an inverted one.
+
+## Colour
+
+| Token | Meaning |
+| --- | --- |
+| `--color-bg` / `--color-bg-deep` / `--color-bg-subtle` | Page canvases; `deep` sits under heroes and final CTAs |
+| `--color-surface` / `--color-surface-raised` / `--color-surface-interactive` | Card, panel and control surfaces |
+| `--color-border` / `--color-border-strong` / `--color-border-accent` | Hairlines, emphasis rules, active edges |
+| `--color-text` / `--color-text-secondary` / `--color-text-muted` | Reading hierarchy; muted never carries essential meaning alone |
+| `--color-action` / `--color-action-hover` / `--color-on-action` | Primary interactive fill and its guaranteed foreground |
+| `--color-accent` / `--color-on-accent` | Flow Aqua: connection, intelligence, active systems |
+| `--color-highlight` / `--color-on-highlight` | Volt Lime: acceleration and progress — budgeted at ~5% of any composition |
+| `--color-focus` | Focus ring; clears 3:1 against every surface it appears on |
+
+**Foreground pairing is a token, not a decision.** `--color-on-accent` and `--color-on-highlight`
+resolve to dark ink, which is what stops white text ever landing on bright aqua or lime.
+
+## Type
+
+Sora for display, Inter for everything else. The scale is fluid via `clamp()`:
+Display XL 64→104, Display 52→80, H1 42→64, H2 34→52, H3 28→36, Title 20→24, then fixed
+Body large 18, Body 16, Body small 14, Caption 12. **14px is the floor for body copy**; 12px is
+reserved for eyebrows, labels and chart annotation.
+
+## Spacing and layout
+
+4px base (`--space-1` … `--space-40`). Grid: 4 columns at 360px, 8 at 768px, 12 at 1024px.
+Content maxes at `--container-max` (1280px); hero and visualization canvases may bleed to
+`--container-wide` (1600px).
+
+## Motion
+
+One easing token — `--ease-flow: cubic-bezier(0.22, 1, 0.36, 1)` — and four duration tiers:
+micro 150ms, component 220ms, reveal 560ms, hero 1200ms. Ambient loops run 8–16s and stop under
+reduced motion or when paused.
+
+## The gradient
+
+`--gradient-flow` (`#00D4C7 → #54E58B → #C7FF3D` at 135°) is reserved for the Axlo diagonal,
+brand paths, hero geometry and a single highlight per section. It is never used for body text,
+form fields, standard navigation, every button, or any error or critical-interface state.
+
+## Rules to check in review
+
+1. No component CSS references a primitive colour token directly.
+2. Every interactive component defines default, hover, focus-visible, pressed and disabled.
+3. Nothing is communicated by colour alone — pair it with a label, icon, weight or position.
+4. Both themes are reviewed. Use the **Theme → Both** toolbar to see them side by side.

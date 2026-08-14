@@ -1,0 +1,30 @@
+/* The shared section intro. Spacing is entirely `--flow-*` tokens, so the
+   eyebrow → heading → lead → content rhythm is identical on every band. */
+
+.head {
+  max-width: 46rem;
+  margin-bottom: var(--flow-intro-content);
+}
+
+.headWide {
+  max-width: 52rem;
+}
+
+.heading {
+  margin-top: var(--flow-eyebrow-heading);
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: 600;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.lead {
+  margin-top: var(--flow-heading-lead);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+}

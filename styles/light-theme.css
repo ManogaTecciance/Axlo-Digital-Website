@@ -1,0 +1,87 @@
+/* ==========================================================================
+   Axlo Flow — Light theme semantic tokens
+
+   NOT IMPORTED. The site is dark-only: `globals.css` no longer pulls this in
+   and nothing sets `data-theme="light"`. Kept as the record of the light
+   palette — re-add the import in globals.css to bring it back.
+   ========================================================================== */
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-bg: var(--pure-white);
+  --color-bg-deep: var(--cloud-100);
+  --color-bg-subtle: var(--axlo-cloud);
+
+  /* Surfaces */
+  --color-surface: var(--pure-white);
+  --color-surface-raised: var(--cloud-050);
+  --color-surface-interactive: var(--cloud-100);
+  --color-surface-inverse: var(--axlo-midnight);
+
+  /* Borders */
+  --color-border: var(--cloud-300);
+  --color-border-strong: var(--cloud-500);
+  --color-border-accent: rgba(0, 108, 104, 0.4);
+
+  /* Text */
+  --color-text: var(--ink-900);
+  --color-text-secondary: var(--digital-slate);
+  --color-text-muted: var(--ink-500);
+  --color-text-inverse: var(--ink-050);
+
+  /* Action */
+  --color-action: var(--action-light);
+  --color-action-hover: var(--action-light-hover);
+  --color-action-pressed: #004a47;
+  --color-on-action: var(--pure-white);
+  --color-action-quiet-bg: rgba(0, 108, 104, 0.08);
+  --color-action-quiet-bg-hover: rgba(0, 108, 104, 0.14);
+
+  /* Accents. Flow Aqua and Volt Lime stay bright in light mode but are only
+     ever used as fills with dark foregrounds, or as thin strokes. */
+  --color-accent: var(--kinetic-teal);
+  --color-on-accent: var(--pure-white);
+  --color-highlight: var(--volt-lime);
+  --color-on-highlight: var(--ink-900);
+  --color-accent-deep: #004a47;
+
+  /* Focus — #007F78 clears 3:1 against white and against cloud surfaces */
+  --color-focus: #007f78;
+  --color-focus-contrast: var(--pure-white);
+
+  /* Status */
+  --color-success: #146c43;
+  --color-on-success: var(--pure-white);
+  --color-warning: #8a5a00;
+  --color-on-warning: var(--pure-white);
+  --color-danger: #b3261e;
+  --color-danger-bg: rgba(179, 38, 30, 0.08);
+  --color-on-danger: var(--pure-white);
+  --color-info: var(--kinetic-teal);
+
+  /* Data visualization — series darkened for contrast on white */
+  --viz-bg: var(--pure-white);
+  --viz-grid: rgba(95, 107, 117, 0.2);
+  --viz-axis: var(--digital-slate);
+  --viz-label: var(--ink-900);
+  --viz-series-1: var(--kinetic-teal);
+  --viz-series-2: #00918a;
+  --viz-series-3: var(--digital-slate);
+  --viz-series-4: #3d5a75;
+  --viz-highlight: #6b8f00;
+  --viz-context: rgba(95, 107, 117, 0.16);
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(11, 18, 32, 0.06);
+  --shadow-md: 0 12px 32px -16px rgba(11, 18, 32, 0.18);
+  --shadow-lg: 0 32px 64px -28px rgba(11, 18, 32, 0.22);
+  --shadow-accent: 0 20px 60px -34px rgba(0, 108, 104, 0.4);
+
+  --image-filter: none;
+  --scrim: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 100%);
+
+  --selection-bg: rgba(0, 108, 104, 0.18);
+  --selection-text: var(--ink-900);
+}

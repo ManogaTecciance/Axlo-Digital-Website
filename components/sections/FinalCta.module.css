@@ -1,0 +1,104 @@
+/* ==========================================================================
+   Section 05 — Final CTA
+
+   One action, one address. Everything here exists to keep the primary button
+   the first thing the eye lands on after the headline.
+   ========================================================================== */
+
+.section {
+  position: relative;
+  overflow: hidden;
+}
+
+.layout {
+  position: relative;
+  display: grid;
+  gap: var(--space-10);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-12);
+  }
+}
+
+/* Sized to the column it sits in rather than to the page: at the shared
+   display ramp "Have a complex idea?" overruns a 7-column measure and breaks
+   after "complex", which loses the question. */
+.headline {
+  margin-top: var(--flow-eyebrow-heading);
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4.4vw, 4rem); /* 40 → 64 */
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
+  font-weight: 600;
+  white-space: pre-line;
+  /* The two authored lines are the composition — never let the balancer
+     re-break them. */
+  text-wrap: initial;
+}
+
+.supporting {
+  margin-top: var(--flow-heading-lead);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 46ch;
+}
+
+/* Stacked and full-width on mobile so the primary action is a thumb-sized
+   target, side by side from the first breakpoint up. */
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+@media (min-width: 560px) {
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6);
+  }
+}
+
+.primary {
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .primary {
+    width: auto;
+  }
+}
+
+/* The secondary half of the pair: same target height as the button, clearly
+   lighter in weight so the primary action stays primary. */
+.email {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  font-size: var(--text-body-md);
+  color: var(--color-text-secondary);
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: color var(--duration-micro) var(--ease-flow);
+}
+
+@media (min-width: 560px) {
+  .email {
+    justify-content: flex-start;
+  }
+}
+
+.email:hover {
+  color: var(--color-accent);
+}

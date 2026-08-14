@@ -1,0 +1,24 @@
+.skipLink {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: var(--z-toast);
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-action);
+  color: var(--color-on-action);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-6)));
+  transition: transform var(--duration-micro) var(--ease-flow);
+}
+
+.skipLink:focus-visible {
+  transform: none;
+  outline: var(--border-thick) solid var(--color-focus);
+  outline-offset: 2px;
+}
