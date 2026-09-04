@@ -233,6 +233,23 @@ differently under the dev server. Two projects: desktop 1440×900 and mobile 390
 | `products` | Both products, carousel a11y, external AxloPOS link safety, reduced-motion behaviour |
 | `content` | CTA wording, mailto subject, unverifiable-claim sweep, no "coming soon", legal drafts unlinked and noindex |
 
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`, in two parallel jobs:
+
+| Job | Runs | Observed |
+| --- | --- | --- |
+| **Lint, types and build** | `npm run typecheck`, `npm run lint`, `npm run build` | ~1 min |
+| **End-to-end tests** | `npm test` — 120 tests across both viewport projects | ~4 min |
+
+Both install with `npm ci`, so a `package.json` change that is not reflected in `package-lock.json`
+fails the build rather than silently resolving a different tree than you get locally. Run
+`npm install` and commit the lockfile alongside the change.
+
+The e2e job installs the branded Google Chrome build, because `playwright.config.ts` asks for
+`channel: 'chrome'` rather than Playwright's bundled Chromium. On failure it uploads `test-results/`,
+which carries the traces Playwright writes on the retry.
+
 ---
 
 ## Documentation
