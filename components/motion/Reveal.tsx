@@ -27,12 +27,50 @@ import { useReducedMotion } from '@/lib/hooks';
 
 type RevealTag = 'div' | 'section' | 'li' | 'article' | 'header' | 'ol' | 'ul';
 
+/**
+ * Capture mode — for automated screenshots only.
+ *
+ * `fullPage` screenshots resize the viewport to the document height. That
+ * re-runs layout, re-fires every IntersectionObserver, and leaves anything
+ * below the original fold sitting in its pending state — so the capture comes
+ * out with blank bands even though the page is correct in a real browser.
+ *
+ * When the flag is set, every reveal resolves to `shown` immediately and
+ * registers no observer at all, so a later resize has nothing to re-fire.
+ *
+ * WHY A GLOBAL AND NOT A `data-` ATTRIBUTE
+ * The first attempt set `html[data-capture="true"]` from a Playwright init
+ * script. It did not survive: React reconciles the attributes on `<html>`
+ * during hydration and strips anything the server did not render, so by the
+ * time the reveals ran the flag was already gone. A property on `window` is
+ * outside React's tree and cannot be reconciled away.
+ *
+ * WHY NOT JUST EMULATE REDUCED MOTION
+ * Because that conflates two different things. Reduced motion is a real user
+ * preference with its own rendering, and it must keep being tested *as itself*
+ * — `tests/products.spec.ts` asserts that path independently. Screenshot
+ * capture is tooling. Giving it a separate flag means the accessibility
+ * behaviour is never weakened or bent to suit a screenshot.
+ *
+ * Set only by `scripts/capture-screenshots.mjs`. Nothing in the application
+ * sets it and no user action can reach it.
+ */
+declare global {
+  interface Window {
+    __AXLO_CAPTURE__?: boolean;
+  }
+}
+
+export function isCaptureMode(): boolean {
+  return typeof window !== 'undefined' && window.__AXLO_CAPTURE__ === true;
+}
+
 function useReveal(ref: React.RefObject<HTMLElement | null>, enabled: boolean) {
   useLayoutEffect(() => {
     const node = ref.current;
     if (!node) return;
 
-    if (!enabled || typeof IntersectionObserver === 'undefined') {
+    if (!enabled || isCaptureMode() || typeof IntersectionObserver === 'undefined') {
       node.dataset.reveal = 'shown';
       return;
     }

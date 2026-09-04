@@ -2,7 +2,7 @@
   "name": "axlo-digital-website",
   "version": "0.1.0",
   "private": true,
-  "description": "Axlo Digital — Connected technology. Faster business.",
+  "description": "Axlo Digital \u2014 Connected technology. Faster business.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "test:ui": "playwright test --ui",
+    "screenshots": "next build && { next start -p 4477 & echo $! > .capture.pid; }; until curl -sf http://localhost:4477 -o /dev/null; do sleep 1; done; node scripts/capture-screenshots.mjs; status=$?; kill $(cat .capture.pid) 2>/dev/null; rm -f .capture.pid; exit $status"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",

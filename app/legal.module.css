@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Legal pages — Privacy, Terms, Cookies.
+
+   THIS FILE WAS MISSING.
+   `components/layout/LegalPage.tsx` has imported `@/app/legal.module.css`
+   since it was written, and the file did not exist. Nothing referenced
+   `LegalPage`, so the build never resolved the import and never failed — a
+   defect that would have surfaced the moment the first legal route was added.
+   It is added here.
+
+   Layout: a sticky table of contents beside a readable prose column, because
+   policy documents are navigated rather than read start to finish.
+   ========================================================================== */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-10);
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: clamp(3rem, 5vw, 5rem);
+    align-items: start;
+  }
+}
+
+/* ---- Table of contents --------------------------------------------------- */
+
+.toc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+@media (min-width: 1024px) {
+  .toc {
+    position: sticky;
+    /* Clears the sticky header, plus breathing room. */
+    top: calc(var(--header-height) + var(--space-6));
+    max-height: calc(100vh - var(--header-height) - var(--space-12));
+    overflow-y: auto;
+  }
+}
+
+.tocTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.tocLink {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body-sm);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: background-color var(--duration-micro) var(--ease-flow),
+    color var(--duration-micro) var(--ease-flow);
+}
+
+.tocLink:hover {
+  background-color: var(--color-action-quiet-bg);
+  color: var(--color-text);
+}
+
+/* ---- Prose --------------------------------------------------------------- */
+
+.prose {
+  min-width: 0;
+  max-width: 72ch;
+}
+
+.section {
+  padding-block: var(--space-8);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+  /* Anchored from the table of contents — clear the sticky header. */
+  scroll-margin-top: calc(var(--header-height) + var(--space-8));
+}
+
+.section:first-child {
+  padding-top: 0;
+}
+
+.section:last-child {
+  border-bottom: 0;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+
+.text {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.text + .text {
+  margin-top: var(--space-4);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.listItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+/* The global reset removes list markers, so a list that needs one draws it. */
+.marker {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--gradient-flow);
+  translate: 0 -0.15em;
+}

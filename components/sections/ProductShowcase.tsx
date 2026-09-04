@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/foundations/Button';
 import { Reveal } from '@/components/motion/Reveal';
-import { AxloPosInterface } from '@/components/product-demo/AxloPosInterface';
 import { Comply360Interface } from '@/components/product-demo/Comply360Interface';
 import { ProductMediaCarousel } from '@/components/product-demo/ProductMediaCarousel';
+import { ProductScreenshot } from '@/components/product-demo/ProductScreenshot';
 import type { Product, ProductState } from '@/content/products';
 import { track } from '@/lib/analytics';
 import styles from './ProductShowcase.module.css';
@@ -14,19 +14,25 @@ import styles from './ProductShowcase.module.css';
  *
  * The two products render through the same component and the same state
  * carousel, which is the structural guarantee that neither can end up better
- * presented than the other — they differ only in their content and in which
- * interface kit draws their states.
+ * presented than the other — they differ only in their content and in what
+ * their states actually are.
  *
  * The copy answers, in order: what it is (positioning), who it serves
  * (audience), the problem and the value (description), what it does
- * (capabilities). The interface carries the rest.
+ * (capabilities). A product with only one approved sentence of copy carries it
+ * in the description slot and skips the first two — see `data-lead` below.
  */
-function renderState(productId: string, state: ProductState) {
-  return productId === 'comply360' ? (
-    <Comply360Interface state={state.id} />
-  ) : (
-    <AxloPosInterface state={state.id} />
-  );
+
+/**
+ * A state is a real screenshot or a composed interface, decided by the content
+ * rather than by the product id. AxloPOS is now the former for both its states;
+ * the composed `AxloPosInterface` that stood in for it has been deleted rather
+ * than left behind a branch, so there is no path back to publishing a drawn
+ * interface for a product whose real one we hold.
+ */
+function renderState(state: ProductState) {
+  if (state.media) return <ProductScreenshot media={state.media} />;
+  return <Comply360Interface state={state.id} />;
 }
 
 export function ProductShowcase({ product, flip }: { product: Product; flip: boolean }) {
@@ -46,9 +52,19 @@ export function ProductShowcase({ product, flip }: { product: Product; flip: boo
             {product.name}
           </h3>
 
-          <p className={styles.positioning}>{product.positioning}</p>
-          <p className={styles.audience}>{product.audience}</p>
-          <p className={styles.description}>{product.description}</p>
+          {product.positioning ? <p className={styles.positioning}>{product.positioning}</p> : null}
+          {product.audience ? <p className={styles.audience}>{product.audience}</p> : null}
+
+          {/* When a product has no positioning line, its description *is* the
+              opening statement, so it is set at lead weight rather than left as
+              quiet body copy under nothing. Typography only — no copy is added
+              to fill the gap. */}
+          <p
+            className={styles.description}
+            data-lead={product.positioning ? undefined : 'true'}
+          >
+            {product.description}
+          </p>
 
           <ul className={styles.capabilities}>
             {product.capabilities.map((capability) => (
@@ -81,18 +97,13 @@ export function ProductShowcase({ product, flip }: { product: Product; flip: boo
               >
                 {product.cta.label}
               </Button>
-            ) : (
-              // No confirmed URL yet — a clearly-labelled placeholder, never a
-              // dead link. Announced to assistive technology, not silent.
-              <span className={styles.placeholderCta}>
-                <span className={styles.placeholderButton} aria-disabled="true">
-                  {product.cta.label}
-                </span>
-                <span className={styles.placeholderNote} role="note">
-                  Link coming soon
-                </span>
-              </span>
-            )}
+            ) : null}
+            {/* A product with no confirmed public URL renders no action at all.
+                This previously showed a disabled button captioned "Link coming
+                soon", which is precisely the kind of unfinished placeholder the
+                release must not publish — and a disabled control that never
+                becomes enabled is worse than an absent one. The product's own
+                copy and interface carry the section without it. */}
           </div>
         </Reveal>
       </div>
@@ -102,7 +113,7 @@ export function ProductShowcase({ product, flip }: { product: Product; flip: boo
           states={product.states}
           label={product.name}
           analyticsProduct={product.id}
-          render={(state) => renderState(product.id, state)}
+          render={(state) => renderState(state)}
         />
       </div>
     </article>

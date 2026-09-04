@@ -116,6 +116,19 @@
   max-width: 46ch;
 }
 
+/* The opening statement, where a product has no separate positioning line.
+   Larger and in primary text, sitting where the positioning would have — so
+   the panel still opens on a statement rather than on quiet body copy under a
+   heading, without a second sentence being written to fill the slot. */
+.description[data-lead='true'] {
+  margin-top: var(--space-4);
+  font-size: clamp(1.0625rem, 1.1vw, 1.1875rem); /* 17 → 19 */
+  line-height: 1.5;
+  color: var(--color-text);
+  max-width: 44ch;
+  text-wrap: pretty;
+}
+
 /* ---- Capabilities ------------------------------------------------------- */
 
 .capabilities {
@@ -171,30 +184,10 @@
   margin-top: var(--space-8);
 }
 
-.placeholderCta {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.placeholderButton {
-  display: inline-flex;
-  align-items: center;
-  min-height: 3rem;
-  padding-inline: var(--space-6);
-  border: var(--border-hairline) dashed var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
-  font-size: var(--text-body);
-  font-weight: 500;
-  cursor: not-allowed;
-}
-
-.placeholderNote {
-  font-size: var(--text-body-sm);
-  color: var(--color-text-muted);
-}
+/* The `.placeholderCta` / `.placeholderButton` / `.placeholderNote` rules that
+   sat here styled a disabled "Link coming soon" button. The markup was removed
+   in Phase 1 and the styles are removed with it — dead rules for a control the
+   release must never publish are how it comes back. */
 
 .visual {
   min-width: 0;

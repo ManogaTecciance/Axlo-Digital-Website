@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { settle } from './helpers';
 
+/** The five approved section anchors, in document order. */
+const ANCHORS = ['#home', '#services', '#products', '#how-we-work', '#contact'];
+
 test.describe('navigation', () => {
   test('every primary link resolves to a section on this page', async ({ page }) => {
     await page.goto('/');
@@ -12,6 +15,58 @@ test.describe('navigation', () => {
 
     for (const href of hrefs) {
       await expect(page.locator(href as string)).toHaveCount(1);
+    }
+  });
+
+  test('all five approved anchors exist exactly once, on a section', async ({ page }) => {
+    await page.goto('/');
+
+    for (const anchor of ANCHORS) {
+      const target = page.locator(anchor);
+      await expect(target, anchor).toHaveCount(1);
+      expect(
+        await target.evaluate((el) => el.tagName.toLowerCase()),
+        `${anchor} must be a section, so it inherits the sticky-header offset`,
+      ).toBe('section');
+    }
+  });
+
+  test('the logo returns to the top of the page', async ({ page }) => {
+    await page.goto('/');
+    const brand = page.locator('header a').first();
+    await expect(brand).toHaveAttribute('href', '#home');
+    await expect(brand).toHaveAttribute('aria-label', /Axlo Digital/);
+  });
+
+  test('the header project action points at the closing section', async ({ page }) => {
+    test.skip(test.info().project.name === 'mobile', 'header CTA is in the drawer below 1024');
+
+    const cta = page.locator('header a[href="#contact"]').last();
+    await page.goto('/');
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveText('Talk to Axlo');
+  });
+
+  test('no section heading is hidden behind the sticky header, at any anchor', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    for (const anchor of ANCHORS) {
+      await page.evaluate((id) => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }, anchor.slice(1));
+      await page.waitForTimeout(250);
+
+      const clear = await page.evaluate((id) => {
+        const section = document.getElementById(id)!;
+        const heading = section.querySelector('h1, h2');
+        if (!heading) return { ok: true, id };
+        const header = document.querySelector('header')!.getBoundingClientRect();
+        // A hair of tolerance: sub-pixel rounding at fractional zoom levels.
+        return { ok: heading.getBoundingClientRect().top >= header.bottom - 1, id };
+      }, anchor.slice(1));
+
+      expect(clear.ok, `${anchor} heading sits under the sticky header`).toBe(true);
     }
   });
 

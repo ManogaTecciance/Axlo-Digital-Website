@@ -12,3 +12,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 storybook-static/
+
+# Playwright artifacts — regenerated on every run, never committed.
+test-results/
+playwright-report/
+.capture.pid
