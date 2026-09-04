@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push supersedes the run in flight for the same ref, so a branch under
+# active development does not queue runs faster than they drain.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # 18.18 is the floor Next 15 needs; 22 is the current LTS.
+  NODE_VERSION: '22'
+
+jobs:
+  # Fast feedback: types, lint and a production build. Reports a broken import
+  # or a type error in about two minutes, long before the browser suite ends.
+  checks:
+    name: Lint, types and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      # `npm ci` rather than `npm install`: it installs strictly from
+      # package-lock.json and fails if the lockfile and package.json have
+      # drifted apart, instead of quietly resolving a different tree than a
+      # contributor gets locally.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      # `next build` reruns lint and types itself, but the two steps above fail
+      # faster and name the cause more precisely when they are the problem.
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    # 120 tests across two viewport projects, each against a real production
+    # build. About three minutes locally; the ceiling is generous for a cold
+    # runner that also has to install a browser.
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # playwright.config.ts asks for `channel: 'chrome'` — the branded Google
+      # Chrome build, not Playwright's bundled Chromium. That is a system
+      # package on Linux rather than a download into ~/.cache/ms-playwright,
+      # so there is nothing here worth caching: the step is a fast no-op when
+      # the runner image already ships Chrome, and installs it when it does
+      # not. CI adapts to the config; the config is not changed to suit CI.
+      - name: Install Google Chrome
+        run: npx playwright install --with-deps chrome
+
+      # The config builds the site and serves it on :4331 itself, so there is
+      # no separate build or serve step. `forbidOnly` and one retry are already
+      # switched on there by the CI environment variable.
+      - name: Run Playwright tests
+        run: npm test
+
+      # Traces are written on the first retry, which is what makes a CI-only
+      # failure debuggable without reproducing it locally.
+      - name: Upload traces and failure artefacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
