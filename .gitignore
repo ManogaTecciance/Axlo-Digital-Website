@@ -12,3 +12,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 storybook-static/
+
+# Playwright output — CI writes here on every run
+test-results/
+playwright-report/

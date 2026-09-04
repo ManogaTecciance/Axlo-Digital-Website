@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push supersedes the run in flight for the same ref. The e2e job takes
+# roughly ten minutes, so without this a branch under active development queues
+# runs faster than it drains.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Node 18.18 is the floor Next 15 needs; 22 is what the site is developed on.
+  NODE_VERSION: '22'
+
+jobs:
+  # Fast feedback: types, lint and a production build. Runs in about two
+  # minutes, so a broken import or a type error is reported long before the
+  # browser suite finishes.
+  checks:
+    name: Lint, types and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      # --frozen-lockfile is the point of running this in CI: it fails if
+      # pnpm-lock.yaml and package.json have drifted apart, rather than quietly
+      # resolving a different tree than a contributor gets locally.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      # `next build` reruns lint and types itself, but the two steps above fail
+      # faster and name the problem more precisely when they are the cause.
+      - name: Build
+        run: pnpm build
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    # The suite is 170 tests across two viewport projects, each asserting
+    # against a real production build. Locally it runs in about nine minutes.
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Browsers are cached against the exact Playwright version, so a version
+      # bump invalidates the cache rather than running the new Playwright
+      # against the old browser build.
+      - name: Resolve Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      # A cache hit restores the browser but not the system libraries it links
+      # against, which live outside the cached path.
+      - name: Install browser system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      # playwright.config.ts builds the site and starts it on :4331 itself, so
+      # there is no separate build or serve step here. `forbidOnly` and one
+      # retry are already switched on by the CI env var in that config.
+      - name: Run Playwright tests
+        run: pnpm test
+
+      # Traces are written on the first retry, so this is what makes a CI-only
+      # failure debuggable without reproducing it locally.
+      - name: Upload traces and failure artefacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore

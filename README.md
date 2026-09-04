@@ -50,6 +50,23 @@ at it instead:
 PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome pnpm test
 ```
 
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main`, in two
+parallel jobs:
+
+| Job | Runs | Roughly |
+| --- | --- | --- |
+| **Lint, types and build** | `pnpm typecheck`, `pnpm lint`, `pnpm build` | 2 min |
+| **End-to-end tests** | `pnpm test` — 170 tests across two viewport projects | 10 min |
+
+Both install with `pnpm install --frozen-lockfile`, so a `package.json` change that is not
+reflected in `pnpm-lock.yaml` fails the build rather than silently resolving a different
+tree than you get locally. Run `pnpm install` and commit the lockfile alongside the change.
+
+The e2e job caches Playwright's browsers against the exact Playwright version, and uploads
+`test-results/` (including traces from the retry) as an artifact when a run fails.
+
 ### Environment variables
 
 None are required to run the site locally — it builds and serves with no configuration.
@@ -75,7 +92,7 @@ connected yet, offering a prefilled mailto. See [Contact form](#contact-form).
 | Scroll reveals | CSS, progressively enhanced — no animation library |
 | Diagrams and product UI | SVG and composed HTML, hand-authored |
 | Primitives | Radix UI — dialog only |
-| Tests | Playwright (+ axe-core) |
+| Tests | Playwright (+ axe-core), run in GitHub Actions |
 
 There is no GSAP, no three.js and no charting library: the hero entrance is a CSS keyframe,
 and the product screens are composed from the primitives in `components/product-demo`.

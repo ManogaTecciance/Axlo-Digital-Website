@@ -9,6 +9,40 @@ import { expect, test } from '@playwright/test';
  * message was sent when it was not.
  */
 test.describe('enquiry form', () => {
+  /**
+   * Warm the route handler before the API assertions run.
+   *
+   * Playwright's `webServer` waits for `/` to answer and then releases every
+   * test at once. `/` is statically prerendered, so that says nothing about
+   * `/api/enquiry`, which is server-rendered on demand and whose module Next
+   * loads on first hit. A request landing inside that window gets a socket
+   * hang up rather than a response — an intermittent failure with nothing
+   * wrong in the assertion.
+   *
+   * The warm-up deliberately trips the honeypot, which the route answers
+   * before the rate limiter increments (see app/api/enquiry/route.ts), so this
+   * costs none of the per-IP budget the tests below rely on. Its outcome is
+   * not asserted: it exists to establish the precondition, and every real
+   * assertion stays exactly as strict.
+   */
+  test.beforeAll(async ({ playwright, baseURL }) => {
+    const context = await playwright.request.newContext({ baseURL });
+    try {
+      await context.post('/api/enquiry', {
+        data: { website: 'warm-up', startedAt: Date.now() },
+        timeout: 15_000,
+      });
+    } catch {
+      // The first request may still lose the race; the next one wakes it.
+      await context.post('/api/enquiry', {
+        data: { website: 'warm-up', startedAt: Date.now() },
+        timeout: 15_000,
+      });
+    } finally {
+      await context.dispose();
+    }
+  });
+
   test('carries every field the brief specifies, each properly labelled', async ({ page }) => {
     await page.goto('/contact');
 
