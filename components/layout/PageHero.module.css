@@ -61,15 +61,21 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+  /* The 44px targets already carry their own height, so the visual gap below
+     comes off the margin rather than stacking on top of it. */
+  margin-bottom: var(--space-3);
   font-size: var(--text-body-sm);
   color: var(--color-text-muted);
 }
 
+/* A real 44px target, not a 32px line of text — these are the primary way
+   back out of a deep page. */
 .crumbLink {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
+  min-height: 2.75rem;
+  padding-inline: var(--space-1);
+  margin-inline: calc(-1 * var(--space-1));
   color: var(--color-text-muted);
   text-decoration: none;
 }

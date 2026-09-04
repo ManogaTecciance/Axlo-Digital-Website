@@ -18,7 +18,7 @@
   display: none;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
   .flowLine {
     display: block;
     position: absolute;
@@ -55,8 +55,15 @@
 
 @media (min-width: 900px) {
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: clamp(2.5rem, 4vw, 4rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: clamp(2rem, 2.6vw, 3rem);
   }
 }
 
@@ -127,7 +134,7 @@
    each area. The panel's own border would otherwise paint over it and leave
    the gradient showing only in the column gaps — three bright dashes instead
    of one line. */
-@media (min-width: 900px) {
+@media (min-width: 1200px) {
   .panel,
   .panel:hover,
   .panel:focus-within {
@@ -198,7 +205,7 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 2.1vw, 2.125rem); /* 28 → 34 */
+  font-size: clamp(1.5rem, 1.8vw, 1.875rem); /* 24 → 30 — four across, not three */
   line-height: 1.12;
   letter-spacing: -0.02em;
   font-weight: 600;
@@ -206,11 +213,64 @@
   text-wrap: balance;
 }
 
+.promise {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-tight-body);
+  color: var(--color-accent);
+  max-width: 34ch;
+}
+
 .description {
   font-size: var(--text-body-md);
   line-height: var(--leading-body);
   color: var(--color-text-secondary);
   max-width: 38ch;
+}
+
+/* Four columns is a narrower measure than three was. */
+@media (min-width: 1200px) {
+  .promise,
+  .description {
+    max-width: 28ch;
+  }
+}
+
+/* ---- Onward link -------------------------------------------------------- */
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  margin-top: var(--space-12);
+  font-size: var(--text-body-md);
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.28em;
+  transition: color var(--duration-micro) var(--ease-flow);
+}
+
+.more:hover {
+  color: var(--color-accent);
+}
+
+.more svg {
+  transition: transform var(--duration-micro) var(--ease-flow);
+}
+
+.more:hover svg {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more:hover svg {
+    transform: none;
+  }
+}
+
+[data-motion='reduced'] .more:hover svg {
+  transform: none;
 }
 
 /* ---- Facets ------------------------------------------------------------- */

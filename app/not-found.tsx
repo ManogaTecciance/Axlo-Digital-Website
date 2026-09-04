@@ -3,14 +3,14 @@ import { Button } from '@/components/foundations/Button';
 import { Eyebrow } from '@/components/foundations/Primitives';
 import { Container, Section } from '@/components/layout/Layout';
 import { SlashMark } from '@/components/motion/FlowLine';
-import { contactMailto, primaryNav } from '@/lib/site';
+import { primaryNav } from '@/lib/site';
 import styles from './not-found.module.css';
 
 /**
  * Custom 404.
  *
- * The site is a single page, so every section link points back to the homepage
- * anchor (`/#section`) rather than a standalone route.
+ * Offers the primary routes as the way back — the list is `primaryNav`, so a
+ * route added to the site appears here without a second edit.
  */
 export default function NotFound() {
   return (
@@ -31,17 +31,17 @@ export default function NotFound() {
               <Button href="/" withArrow>
                 Back to home
               </Button>
-              <Button href={contactMailto} variant="secondary">
+              <Button href="/contact" variant="secondary">
                 Tell us what you were looking for
               </Button>
             </div>
 
-            <nav className={styles.nav} aria-label="Site sections">
+            <nav className={styles.nav} aria-label="Main pages">
               <span className={styles.navLabel}>Or go straight to</span>
               <ul className={styles.navList}>
                 {primaryNav.map((item) => (
                   <li key={item.href}>
-                    <Link className={styles.navLink} href={`/${item.href}`}>
+                    <Link className={styles.navLink} href={item.href}>
                       {item.label}
                     </Link>
                   </li>

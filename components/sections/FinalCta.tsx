@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Button } from '@/components/foundations/Button';
 import { Eyebrow } from '@/components/foundations/Primitives';
 import { Container, Section } from '@/components/layout/Layout';
 import { Reveal } from '@/components/motion/Reveal';
+import { CtaLink } from '@/components/navigation/CtaLink';
 import { track } from '@/lib/analytics';
 import { useInViewport } from '@/lib/hooks';
-import { contactMailto, site } from '@/lib/site';
+import { contactMailto, primaryCta, site } from '@/lib/site';
 import { StartHereIcon } from './StartHereIcon';
 import styles from './FinalCta.module.css';
 
@@ -19,10 +19,12 @@ import styles from './FinalCta.module.css';
  *
  * The three "I'd like to" interest pills that used to sit under the button were
  * removed: they gave the eye three secondary choices immediately below the one
- * decision this section exists to ask for, and each opened the same mail client
- * the primary action does. The CTA now carries the same wording as every other
- * project action on the page — "Start a project" — so the site asks for one
- * thing in one way.
+ * decision this section exists to ask for. The CTA carries the same wording as
+ * every other conversion action on the site — "Talk to Axlo", from
+ * `primaryCta` — so the site asks for one thing in one way.
+ *
+ * The button now goes to /contact rather than opening a mail client. The
+ * address stays beside it for anyone who would rather write directly.
  */
 export function FinalCta() {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +45,7 @@ export function FinalCta() {
             <Eyebrow withMark={false}>Start here</Eyebrow>
 
             <h2 className={styles.headline} id="cta-heading">
-              {'Have a complex idea?\nLet’s make it flow.'}
+              {'Have a complex business problem?\nLet’s make it flow.'}
             </h2>
 
             <p className={styles.supporting}>
@@ -51,15 +53,17 @@ export function FinalCta() {
             </p>
 
             <div className={styles.actions}>
-              <Button
-                href={contactMailto}
+              <CtaLink
+                href={primaryCta.href}
                 size="lg"
                 withArrow
                 className={styles.primary}
-                onClick={() => track('cta_start_project', { id: 'final-cta', placement: 'contact' })}
+                event="cta_talk_to_axlo"
+                analyticsId="final-cta"
+                placement="contact"
               >
-                Start a project
-              </Button>
+                {primaryCta.label}
+              </CtaLink>
 
               <a
                 className={styles.email}

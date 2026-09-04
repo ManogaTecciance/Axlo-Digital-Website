@@ -1,0 +1,183 @@
+/* ==========================================================================
+   Homepage band 05 — ERP & finance technology
+
+   Visually distinct from the products band above it on purpose (brief §13):
+   partner platforms are OUTLINED, products are composed interfaces. Nobody
+   scanning the page should be able to read Odoo or QuickBooks as an Axlo
+   product, and that distinction is carried by the treatment rather than by a
+   sentence somebody might not read.
+   ========================================================================== */
+
+/* ---- Partner platforms -------------------------------------------------- */
+
+.partners {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--flow-card-gap);
+}
+
+@media (min-width: 800px) {
+  .partners {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+}
+
+.partner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  /* Dashed, not solid: the products band uses solid surfaces, so the outline
+     alone says "different layer" before a word is read. */
+  border: var(--border-hairline) dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background-color: transparent;
+  transition: border-color var(--duration-component) var(--ease-flow),
+    background-color var(--duration-component) var(--ease-flow);
+}
+
+.partner:hover,
+.partner:focus-within {
+  border-color: var(--color-border-accent);
+  background-color: var(--color-action-quiet-bg);
+}
+
+.vendorLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.vendorDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border: var(--border-hairline) solid var(--color-text-muted);
+  border-radius: 50%;
+}
+
+.partnerName {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+/* The whole card is the target; the heading link stretches over it so the
+   accessible name stays the platform name rather than the card's full text. */
+.partnerLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.partnerLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+
+.partner {
+  position: relative;
+}
+
+.partnerLink:focus-visible::after {
+  outline: var(--border-thick) solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.partnerPositioning {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-tight-body);
+  color: var(--color-accent);
+}
+
+.partnerDescription {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-3);
+}
+
+.capability {
+  padding: 0.3rem var(--space-3);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  /* The body floor — these are readable phrases, not tracked labels. */
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ---- Engineering disciplines -------------------------------------------- */
+
+.engineering {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-10);
+  padding-top: var(--space-10);
+  border-top: var(--border-hairline) solid var(--color-border);
+}
+
+@media (min-width: 700px) {
+  .engineering {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .engineering {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.discipline {
+  display: flex;
+}
+
+.disciplineLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-hairline) solid transparent;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: border-color var(--duration-micro) var(--ease-flow),
+    background-color var(--duration-micro) var(--ease-flow);
+}
+
+.disciplineLink:hover {
+  border-color: var(--color-border);
+  background-color: var(--color-action-quiet-bg);
+}
+
+.disciplineName {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.disciplinePositioning {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-tight-body);
+  color: var(--color-text-muted);
+}

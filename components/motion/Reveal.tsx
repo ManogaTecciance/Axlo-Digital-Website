@@ -94,10 +94,15 @@ export function RevealGroup({
   children,
   className,
   as: Tag = 'div',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
 }: {
   children: ReactNode;
   className?: string;
   as?: RevealTag;
+  /** Names the group — a reveal container is often the page's real list. */
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 }) {
   // Hand each child its position so the stagger reads left-to-right / top-down
   // without every caller having to thread an index through its map.
@@ -107,7 +112,11 @@ export function RevealGroup({
       : child,
   );
 
-  return <Tag className={className}>{staggered}</Tag>;
+  return (
+    <Tag className={className} aria-label={ariaLabel} aria-labelledby={ariaLabelledBy}>
+      {staggered}
+    </Tag>
+  );
 }
 
 export function RevealItem({

@@ -8,9 +8,9 @@ import { defineConfig, devices } from '@playwright/test';
  * motion, layout at twelve resolutions) behaves differently under the dev
  * server's overlays and un-minified CSS.
  *
- * `channel: 'chrome'` uses the locally installed browser rather than requiring
- * `playwright install`, so `npm test` works on a clean checkout with a browser
- * already on the machine.
+ * The browser is Playwright's own bundled Chromium, so `pnpm test` works on a
+ * clean checkout after `npx playwright install chromium` without depending on
+ * which browser happens to be installed on the machine.
  */
 const PORT = 4331;
 
@@ -26,16 +26,22 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'on-first-retry',
+    /* Sandboxes and CI images sometimes ship a Chromium that Playwright did
+       not download itself. Setting PLAYWRIGHT_CHROMIUM_PATH points the run at
+       it; unset, Playwright uses its own bundled build as normal. */
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+      : {},
   },
 
   projects: [
     {
       name: 'desktop',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome', viewport: { width: 1440, height: 900 } },
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'mobile',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome', viewport: { width: 390, height: 844 } },
+      use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 } },
     },
   ],
 

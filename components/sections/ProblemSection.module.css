@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Homepage band 02 — the problem
+
+   A before/after read: fragmented work on the left, one connected flow on the
+   right, joined by a single line. The two sides are deliberately the same
+   height and the same row count so the comparison is structural rather than
+   rhetorical.
+   ========================================================================== */
+
+/* ---- Dependency chain --------------------------------------------------- */
+
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-12);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.chainItem {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The arrow is generated, so the markup carries only the five words and a
+   screen reader reads the list without five stray glyphs. */
+.chainItem:not(:last-child)::after {
+  content: '→';
+  margin-left: var(--space-3);
+  color: var(--color-accent);
+}
+
+/* ---- Comparison --------------------------------------------------------- */
+
+.compare {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-10);
+}
+
+@media (min-width: 900px) {
+  .compare {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: stretch;
+  }
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-8);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+/* The disconnected side is intentionally flatter — no accent, no glow. It is
+   the state the visitor is being invited to leave. */
+.before {
+  background-color: color-mix(in srgb, var(--color-surface) 60%, transparent);
+}
+
+.after {
+  border-color: var(--color-border-accent);
+  background-image: var(--gradient-flow-soft);
+}
+
+.sideTitle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.sideLabel {
+  align-self: flex-start;
+  padding: 0.2rem var(--space-3);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.sideLabelAccent {
+  border-color: var(--color-border-accent);
+  color: var(--color-accent);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+/* Two different markers, not two different colours: the shapes carry the
+   distinction for anyone who cannot separate the hues. */
+.markerBefore,
+.markerAfter {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.markerBefore {
+  border: var(--border-hairline) solid var(--color-text-muted);
+  /* A broken square — the fragmented state. */
+  border-radius: var(--radius-xs);
+  opacity: 0.7;
+}
+
+.markerAfter {
+  border-radius: 50%;
+  background: var(--gradient-flow);
+}
+
+/* ---- Bridge ------------------------------------------------------------- */
+
+/* On mobile the two panels stack, so the join is a short vertical run between
+   them; from the three-column layout it becomes the horizontal connector. */
+.bridge {
+  position: relative;
+  display: block;
+  justify-self: center;
+  width: var(--border-thick);
+  height: var(--space-10);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    180deg,
+    var(--gradient-flow-stop-1) 0%,
+    var(--gradient-flow-stop-3) 100%
+  );
+  opacity: 0.5;
+}
+
+@media (min-width: 900px) {
+  .bridge {
+    align-self: center;
+    width: var(--space-10);
+    height: var(--border-thick);
+    background: linear-gradient(
+      90deg,
+      var(--gradient-flow-stop-1) 0%,
+      var(--gradient-flow-stop-3) 100%
+    );
+  }
+}
+
+.bridgePacket {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--gradient-flow-stop-3);
+  box-shadow: 0 0 12px 2px rgba(199, 255, 61, 0.5);
+}
+
+/* Vertical run on mobile. */
+.bridgePacket {
+  left: 50%;
+  translate: -50% -50%;
+  animation: problem-packet-y var(--duration-ambient) var(--ease-standard) infinite;
+}
+
+@media (min-width: 900px) {
+  .bridgePacket {
+    top: 50%;
+    left: 0;
+    translate: -50% -50%;
+    animation-name: problem-packet-x;
+  }
+}
+
+@keyframes problem-packet-y {
+  0%,
+  10% {
+    top: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes problem-packet-x {
+  0%,
+  10% {
+    left: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  90%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* ---- Reduced motion ----------------------------------------------------- */
+
+/* The bridge stays — it is the structural join between the two states — but
+   nothing travels along it. */
+@media (prefers-reduced-motion: reduce) {
+  .bridgePacket {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+[data-motion='reduced'] .bridgePacket {
+  animation: none;
+  opacity: 0;
+}

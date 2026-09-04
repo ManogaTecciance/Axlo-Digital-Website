@@ -13,9 +13,11 @@ import styles from './AppFrame.module.css';
  * One accurate sentence describes what is on screen.
  *
  * CONTENT POLICY
- * Every frame carries a visible "Sample view" chip. The figures inside are
- * neutral sample content, and the chip means the composition can never be read
- * as a real trading or filing position.
+ * Every frame carries a visible "Demo data" chip, which brief section 2
+ * requires on any mockup figure that is not real, approved data. None of these
+ * figures are: they are neutral illustrative content, and the chip means the
+ * composition can never be read as a real trading or filing position. The
+ * accessible label says the same thing, so the disclosure is not visual-only.
  */
 export function AppFrame({
   title,
@@ -32,7 +34,11 @@ export function AppFrame({
   tone?: 'default' | 'flush';
 }) {
   return (
-    <div className={styles.frame} role="img" aria-label={`${description} Sample content, not customer data.`}>
+    <div
+      className={styles.frame}
+      role="img"
+      aria-label={`${description} Demo data — illustrative only, not customer data.`}
+    >
       <div className={styles.bar}>
         <span className={styles.dots}>
           <i />
@@ -40,7 +46,7 @@ export function AppFrame({
           <i />
         </span>
         <span className={styles.title}>{title}</span>
-        <span className={styles.sample}>Sample view</span>
+        <span className={styles.sample}>Demo data</span>
       </div>
 
       <div className={tone === 'flush' ? styles.bodyFlush : styles.body}>{children}</div>

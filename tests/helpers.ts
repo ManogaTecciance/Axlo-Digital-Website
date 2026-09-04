@@ -34,3 +34,65 @@ export const RESOLUTIONS: Array<[string, number, number]> = [
   ['1920x1080', 1920, 1080],
   ['2560x1440', 2560, 1440],
 ];
+
+/**
+ * Every indexable route.
+ *
+ * Kept in the tests rather than imported from `lib/site` on purpose: a suite
+ * that reads its expectations from the code under test cannot catch a route
+ * being dropped. This list is the independent statement of what the brief's
+ * site map (§5, §22) requires to exist.
+ */
+export const ROUTES = [
+  '/',
+  '/what-we-do',
+  '/products',
+  '/products/comply360',
+  '/products/axlo-payroll',
+  '/products/axlo-budget',
+  '/products/axlopos',
+  '/solutions',
+  '/solutions/odoo',
+  '/solutions/quickbooks',
+  '/solutions/erp-business-systems',
+  '/solutions/ai-automation',
+  '/solutions/system-integration',
+  '/solutions/custom-software',
+  '/industries',
+  '/industries/retail',
+  '/industries/manufacturing',
+  '/industries/distribution',
+  '/industries/restaurants-hospitality',
+  '/industries/professional-services',
+  '/industries/finance-accounting',
+  '/why-axlo',
+  '/about',
+  '/case-studies',
+  '/insights',
+  '/contact',
+  '/legal/privacy',
+  '/legal/terms',
+  '/legal/cookies',
+] as const;
+
+/** A representative page of each template — enough to catch a layout defect. */
+export const SAMPLE_ROUTES = [
+  '/',
+  '/what-we-do',
+  '/products',
+  '/products/comply360',
+  '/products/axlo-budget',
+  '/solutions',
+  '/solutions/odoo',
+  '/industries',
+  '/industries/retail',
+  '/why-axlo',
+  '/about',
+  '/case-studies',
+  '/insights',
+  '/contact',
+  '/legal/privacy',
+] as const;
+
+/** The width at which the header nav replaces the drawer. */
+export const NAV_BREAKPOINT = 1120;

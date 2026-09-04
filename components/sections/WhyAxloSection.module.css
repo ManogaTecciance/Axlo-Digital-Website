@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Homepage band 06 — Why Axlo
+
+   Six equal positions. No card is emphasised over another, because ranking
+   them would imply an order the brief does not set.
+   ========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1);
+  /* One hairline grid: each cell draws its own top and left rule, and the
+     container clips the outer ones. Cheaper and more even than per-card
+     borders, which double up in the gutters. */
+  border-top: var(--border-hairline) solid var(--color-border);
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-6) var(--space-10);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+  transition: background-color var(--duration-component) var(--ease-flow);
+}
+
+@media (min-width: 700px) {
+  .card {
+    padding-inline: var(--space-8);
+  }
+
+  /* Vertical rules between columns only — never on the leading edge, which
+     would leave a stray line down the left of the section. */
+  .card:not(:nth-child(2n + 1)) {
+    border-left: var(--border-hairline) solid var(--color-border);
+  }
+}
+
+@media (min-width: 1100px) {
+  .card:not(:nth-child(2n + 1)) {
+    border-left: 0;
+  }
+
+  .card:not(:nth-child(3n + 1)) {
+    border-left: var(--border-hairline) solid var(--color-border);
+  }
+}
+
+.card:hover {
+  background-color: var(--color-action-quiet-bg);
+}
+
+/* The accent rule that grows along the top of the card being read. */
+.card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: var(--border-thick);
+  background: var(--gradient-flow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--duration-component) var(--ease-flow);
+}
+
+.card:hover::before,
+.card:focus-within::before {
+  transform: scaleX(1);
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.summary {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 34ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before {
+    transition: none;
+  }
+}
+
+[data-motion='reduced'] .card::before {
+  transition: none;
+}

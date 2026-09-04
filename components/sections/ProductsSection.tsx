@@ -5,13 +5,13 @@ import { ProductShowcase } from './ProductShowcase';
 import styles from './ProductsSection.module.css';
 
 /**
- * Section 03 — Products.
+ * Homepage band 04 — Products (brief §6.4).
  *
- * One section, two products, one component (`ProductShowcase`) rendering both.
- * Comply360 leads in the DOM so it is first on mobile; AxloPOS follows and the
- * two panels alternate sides on desktop. Both draw their interface states from
- * the same primitive kit, so the section reads as one product family rather
- * than as a strong product beside a weak one.
+ * One section, four products, one component (`ProductShowcase`) rendering all
+ * of them. Panels alternate sides on desktop and stack in content order on
+ * mobile. Every card carries the same fields and the same CTA shape, so the
+ * section reads as one product family rather than as two strong products
+ * beside two thin ones.
  */
 export function ProductsSection() {
   return (
@@ -21,9 +21,9 @@ export function ProductsSection() {
           eyebrow="Our products"
           id="products-heading"
           width="wide"
-          lead="Axlo Digital creates connected products that simplify complex workflows and give businesses greater clarity and control."
+          lead="Axlo builds products that solve real operational problems — compliance, payroll, budgeting and point of sale — and connects them to the systems around them."
         >
-          Focused products for real operations.
+          Technology for the way your business works.
         </SectionHeader>
 
         <div className={styles.products}>

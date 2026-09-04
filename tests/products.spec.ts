@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { settle } from './helpers';
 
 test.describe('product carousels', () => {
-  test('both products render three real interface states', async ({ page }) => {
+  test('the two products with composed screens render three real states each', async ({ page }) => {
     await page.goto('/');
     await settle(page);
 
@@ -30,7 +30,9 @@ test.describe('product carousels', () => {
     expect(labels).toHaveLength(6);
     for (const label of labels) {
       expect(label.length).toBeGreaterThan(80);
-      expect(label).toContain('Sample content');
+      // Brief §2 — the demo-data disclosure has to reach assistive technology,
+      // not only the visible chip.
+      expect(label).toContain('Demo data');
     }
   });
 
@@ -70,7 +72,9 @@ test.describe('product carousels', () => {
   });
 
   test('the AxloPOS CTA opens the real product site safely', async ({ page }) => {
-    await page.goto('/');
+    // The external product link now lives on the product page; the homepage
+    // card routes to that page instead.
+    await page.goto('/products/axlopos');
     await settle(page);
 
     const cta = page.locator('a[href="https://www.axlopos.com/"]').first();
@@ -138,5 +142,50 @@ test.describe('reduced motion', () => {
     const carousel = page.locator('[aria-label="Comply360 product views"]');
     await expect(carousel.getByRole('button', { name: /Next Comply360 view/ })).toBeVisible();
     await expect(carousel.locator('button[aria-label^="Show view"]')).toHaveCount(3);
+  });
+});
+
+test.describe('products without composed screens', () => {
+  /* Axlo Payroll and Axlo Budget have no approved interface screens. Drawing a
+     plausible-looking one would be the fabricated proof brief §24 rules out, so
+     they show their real module scope instead. These tests exist to stop a
+     future change from quietly inventing a screenshot for them. */
+
+  test('show a module map on the homepage, never a mock interface', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    for (const id of ['axlo-payroll', 'axlo-budget']) {
+      const panel = page.locator(`article[aria-labelledby="${id}-heading"]`);
+      await expect(panel).toHaveCount(1);
+
+      // No carousel, and no composed interface pretending to be a screenshot.
+      await expect(panel.locator('[aria-roledescription=carousel]')).toHaveCount(0);
+      await expect(panel.locator('figure[aria-labelledby$="module-map"]')).toHaveCount(1);
+      await expect(panel.getByText(/Interface screens are published here once/i)).toBeVisible();
+    }
+  });
+
+  test('their product pages list modules once, not twice', async ({ page }) => {
+    // The page carries a full module list of its own, so repeating the module
+    // map above it would be the same information twice in one screen.
+    await page.goto('/products/axlo-budget');
+    await settle(page);
+
+    await expect(page.locator('figure[aria-labelledby$="module-map"]')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: /Modules and capabilities/i })).toBeVisible();
+
+    const modules = page.locator('ul[aria-label="Axlo Budget modules"] li');
+    await expect(modules).toHaveCount(14);
+  });
+
+  test('a product page shows the workflow spine exactly once', async ({ page }) => {
+    for (const route of ['/products/comply360', '/products/axlo-budget']) {
+      await page.goto(route);
+      await settle(page);
+
+      const spines = page.locator('ol[aria-label$="workflow"]');
+      await expect(spines, route).toHaveCount(1);
+    }
   });
 });

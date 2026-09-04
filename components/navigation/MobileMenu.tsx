@@ -1,40 +1,44 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Logo } from '@/components/foundations/Logo';
 import { MotionToggle } from '@/components/layout/MotionToggle';
-import { scrollToSection } from '@/lib/scroll';
+import { track } from '@/lib/analytics';
 import { contactMailto, primaryCta, primaryNav, site } from '@/lib/site';
 import styles from './MobileMenu.module.css';
 
 /**
- * Mobile navigation.
+ * Mobile and tablet navigation.
  *
  * Radix Dialog supplies the accessibility contract: focus is trapped inside
- * the panel, `Escape` closes it, and the rest of the page is inert to assistive
- * technology while it is open. Every destination is a real in-page anchor, so
- * navigation still works without JavaScript.
+ * the panel, `Escape` closes it, and the rest of the page is inert to
+ * assistive technology while it is open.
  *
- * Selecting a section closes the panel and, rather than returning focus to the
- * trigger, hands focus to the destination section — so keyboard and
- * screen-reader users land where they navigated. This is done through Radix's
- * `onCloseAutoFocus`, which is the moment focus would otherwise snap back.
+ * Now that destinations are routes rather than in-page anchors, closing is
+ * driven by the pathname changing rather than by the link handler — a tap
+ * navigates, the route commits, and the effect below closes the panel. That
+ * also covers a back-button navigation while the drawer is open, which a
+ * click-handler close would miss.
+ *
+ * Products and Solutions carry their children inline. The brief asks mobile to
+ * "preserve the same hierarchy", and a drawer can show the whole tree at once
+ * where a desktop bar cannot.
  */
-export function MobileMenu({ activeSection }: { activeSection: string }) {
+export function MobileMenu() {
   const [open, setOpen] = useState(false);
-  // The section to focus after the panel closes, set by the tapped link.
-  const pending = useRef<string | null>(null);
+  const pathname = usePathname();
 
-  const select = (event: React.MouseEvent, id: string) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    pending.current = id;
-    // Push the hash now so back / forward returns here; the scroll + focus
-    // happen once the dialog has finished closing.
-    if (window.location.hash !== `#${id}`) window.history.pushState(null, '', `#${id}`);
+  // Close on navigation. Effect rather than onClick so browser-driven route
+  // changes close the panel too.
+  useEffect(() => {
     setOpen(false);
-  };
+  }, [pathname]);
+
+  const isCurrent = (href: string) => pathname === href;
+  const isWithin = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -47,26 +51,16 @@ export function MobileMenu({ activeSection }: { activeSection: string }) {
 
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content
-          className={styles.content}
-          aria-label="Site navigation"
-          onCloseAutoFocus={(event) => {
-            if (pending.current) {
-              // Send focus to the destination section instead of the trigger.
-              event.preventDefault();
-              const id = pending.current;
-              pending.current = null;
-              scrollToSection(id);
-            }
-          }}
-        >
+        <Dialog.Content className={styles.content} aria-label="Site navigation">
           <Dialog.Title className="visually-hidden">Site navigation</Dialog.Title>
           <Dialog.Description className="visually-hidden">
-            Jump to any section of the Axlo Digital homepage.
+            Browse the Axlo Digital website.
           </Dialog.Description>
 
           <div className={styles.head}>
-            <Logo size="1.75rem" as="static" />
+            <Link href="/" aria-label="Axlo Digital — home">
+              <Logo size="1.75rem" as="static" />
+            </Link>
             <Dialog.Close className={styles.close} aria-label="Close navigation">
               <svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
                 <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -78,32 +72,51 @@ export function MobileMenu({ activeSection }: { activeSection: string }) {
             <ul className={styles.list}>
               {primaryNav.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     className={styles.link}
                     href={item.href}
-                    aria-current={activeSection === item.sectionId ? 'true' : undefined}
-                    onClick={(event) => select(event, item.sectionId)}
+                    aria-current={isCurrent(item.href) ? 'page' : isWithin(item.href) ? 'true' : undefined}
+                    onClick={() => track('nav_route_click', { id: item.href, placement: 'drawer' })}
                   >
                     <span className={styles.linkLabel}>{item.label}</span>
                     {item.description ? (
                       <span className={styles.linkDescription}>{item.description}</span>
                     ) : null}
-                  </a>
+                  </Link>
+
+                  {item.children ? (
+                    <ul className={styles.subList}>
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            className={styles.subLink}
+                            href={child.href}
+                            aria-current={isCurrent(child.href) ? 'page' : undefined}
+                            onClick={() =>
+                              track('nav_route_click', { id: child.href, placement: 'drawer' })
+                            }
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </li>
               ))}
             </ul>
           </nav>
 
-          <a
+          <Link
             className={styles.cta}
             href={primaryCta.href}
-            onClick={(event) => select(event, primaryCta.sectionId)}
+            onClick={() => track('cta_talk_to_axlo', { id: 'drawer', placement: 'drawer' })}
           >
             {primaryCta.label}
             <svg className={styles.ctaArrow} width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M2.5 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </a>
+          </Link>
 
           <div className={styles.footer}>
             <div className={styles.footerRow}>

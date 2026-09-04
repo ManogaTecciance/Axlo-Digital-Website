@@ -18,7 +18,10 @@
   border-color: var(--color-border-strong);
 }
 
-@media (min-width: 1024px) {
+/* Must match the header's nav breakpoint exactly. Any gap between the two
+   leaves a band of widths with no navigation at all — which is what happened
+   when the nav moved to 1120 and this stayed at 1024. */
+@media (min-width: 1120px) {
   .trigger {
     display: none;
   }
@@ -127,6 +130,7 @@
   background-color: var(--color-action-quiet-bg);
 }
 
+.link[aria-current='page'],
 .link[aria-current='true'] {
   border-left-color: var(--color-accent);
   background-color: var(--color-surface);
@@ -134,6 +138,7 @@
 }
 
 /* Active state carries a marker as well as colour and weight. */
+.link[aria-current='page'] .linkLabel::after,
 .link[aria-current='true'] .linkLabel::after {
   content: '';
   display: inline-block;
@@ -181,7 +186,8 @@
 
 .linkLabel {
   font-family: var(--font-display);
-  font-size: var(--text-title);
+  font-size: 1.375rem; /* 22 — a step under --text-title, which sized a 4-item list */
+  font-weight: 600;
   line-height: 1.2;
 }
 
@@ -215,4 +221,53 @@
 .email {
   font-size: var(--text-body-sm);
   color: var(--color-text-secondary);
+}
+
+/* ---- Child routes -------------------------------------------------------
+   Products and Solutions show their pages inline. The brief asks mobile to
+   preserve the desktop hierarchy, and a scrolling drawer can show the whole
+   tree where a horizontal bar cannot. Indented under a rule so the
+   relationship is structural rather than only typographic. */
+
+.subList {
+  display: flex;
+  flex-direction: column;
+  margin: var(--space-1) 0 var(--space-3) var(--space-4);
+  padding-left: var(--space-4);
+  border-left: var(--border-hairline) solid var(--color-border);
+}
+
+.subLink {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--duration-micro) var(--ease-flow),
+    background-color var(--duration-micro) var(--ease-flow);
+}
+
+.subLink:hover {
+  color: var(--color-text);
+  background-color: var(--color-action-quiet-bg);
+}
+
+/* Current child: weight and colour, plus the accent marker — never colour
+   alone. */
+.subLink[aria-current='page'] {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.subLink[aria-current='page']::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-right: var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  border-radius: 50%;
+  background: var(--color-accent);
 }

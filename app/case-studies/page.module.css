@@ -1,0 +1,170 @@
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.blockHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.blockLead {
+  margin-top: var(--space-4);
+  margin-bottom: var(--flow-intro-content);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 58ch;
+}
+
+/* ---- Published studies (rendered once approved entries exist) ------------ */
+
+.studies {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--flow-card-gap);
+}
+
+@media (min-width: 800px) {
+  .studies {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.study {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+}
+
+.studyIndustry {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.studyTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.studyProblem {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.studyResult {
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-accent);
+}
+
+/* ---- The nine-part structure -------------------------------------------- */
+
+.structure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-1);
+  border-top: var(--border-hairline) solid var(--color-border);
+}
+
+@media (min-width: 700px) {
+  .structure {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .structure {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.part {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5) var(--space-8);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+}
+
+@media (min-width: 700px) {
+  .part:not(:nth-child(2n + 1)) {
+    border-left: var(--border-hairline) solid var(--color-border);
+  }
+}
+
+@media (min-width: 1100px) {
+  .part:not(:nth-child(2n + 1)) {
+    border-left: 0;
+  }
+
+  .part:not(:nth-child(3n + 1)) {
+    border-left: var(--border-hairline) solid var(--color-border);
+  }
+}
+
+.partStep {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.partName {
+  font-family: var(--font-display);
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.partDetail {
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.pending {
+  max-width: 76ch;
+}
+
+/* ---- Closing CTA -------------------------------------------------------- */
+
+.cta {
+  max-width: 46rem;
+}
+
+.ctaHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.ctaLead {
+  margin-top: var(--space-4);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}

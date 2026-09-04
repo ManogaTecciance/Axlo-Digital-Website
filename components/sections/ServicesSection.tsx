@@ -1,24 +1,32 @@
+import Link from 'next/link';
 import { Container, Section } from '@/components/layout/Layout';
 import { SectionHeader } from '@/components/layout/SectionHeader';
-import { RevealGroup, RevealItem } from '@/components/motion/Reveal';
+import { Reveal, RevealGroup, RevealItem } from '@/components/motion/Reveal';
 import { serviceCategories } from '@/content/services';
 import styles from './ServicesSection.module.css';
 
 /**
- * Section 02 — Services.
+ * Homepage band 03 — Capabilities (brief §6.3).
  *
- * Three capability areas, presented as one clean composition rather than a
- * long accordion. A connecting flow line threads the three panels on desktop so
- * they read as one system; each panel lifts on hover as a light affordance, but
- * nothing is hidden behind interaction. No per-service pages, no deliverable
- * lists — the section states what Axlo Digital does and moves on.
+ * Four capability areas, presented as one clean composition rather than a long
+ * accordion. A connecting flow line threads the panels on desktop so they read
+ * as one system; each panel lifts on hover as a light affordance, but nothing
+ * is hidden behind interaction.
+ *
+ * Each panel shows three facets, not the full deliverable list — the complete
+ * list lives on /what-we-do, and putting it here would turn the homepage into
+ * a service catalogue.
  */
 export function ServicesSection() {
   return (
-    <Section theme="dark" id="services" size="large" labelledBy="services-heading">
+    <Section theme="dark" id="capabilities" size="large" labelledBy="capabilities-heading">
       <Container>
-        <SectionHeader eyebrow="What we do" id="services-heading">
-          What we do to move businesses forward.
+        <SectionHeader
+          eyebrow="What we do"
+          id="capabilities-heading"
+          lead="Strategy, experience, technology and operations — four connected disciplines rather than four separate engagements."
+        >
+          From business problem to digital product.
         </SectionHeader>
 
         <div className={styles.flow}>
@@ -34,6 +42,7 @@ export function ServicesSection() {
                   <h3 className={styles.title}>{service.title}</h3>
                 </div>
 
+                <p className={styles.promise}>{service.promise}</p>
                 <p className={styles.description}>{service.description}</p>
 
                 <ul className={styles.facets}>
@@ -47,6 +56,21 @@ export function ServicesSection() {
             ))}
           </RevealGroup>
         </div>
+
+        <Reveal>
+          <Link className={styles.more} href="/what-we-do">
+            See everything we do
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M2.5 8h11M9 3.5 13.5 8 9 12.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+        </Reveal>
       </Container>
     </Section>
   );

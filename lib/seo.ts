@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { products } from '@/content/products';
+import { products, type Product } from '@/content/products';
+import type { Solution } from '@/content/solutions';
 import { site } from './site';
 
 type PageMetaInput = {
@@ -85,7 +86,58 @@ export function websiteSchema() {
 }
 
 /**
- * `SoftwareApplication` for the two products.
+ * `BreadcrumbList` for a secondary page.
+ *
+ * Mirrors the visible breadcrumb trail rendered by `PageHero`, which is the
+ * condition Google states for using it — the markup must describe a trail the
+ * page actually shows.
+ */
+export function breadcrumbSchema(trail: Array<{ label: string; href: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.label,
+      item: `${site.url}${crumb.href === '/' ? '' : crumb.href}`,
+    })),
+  };
+}
+
+/**
+ * `Article` for an insight.
+ *
+ * `author` is emitted as a Person because that is what the content model
+ * holds. No `image` is emitted unless one exists — Google would rather have
+ * the field absent than pointing at nothing.
+ */
+export function articleSchema(article: {
+  title: string;
+  summary: string;
+  slug: string;
+  publishedAt: string;
+  author: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.summary,
+    datePublished: article.publishedAt,
+    author: { '@type': 'Person', name: article.author },
+    publisher: {
+      '@type': 'Organization',
+      name: site.name,
+      url: site.url,
+      logo: `${site.url}/brand/axlo-logo-light.svg`,
+    },
+    mainEntityOfPage: `${site.url}/insights/${article.slug}`,
+  };
+}
+
+/**
+ * `SoftwareApplication` for the product portfolio.
  *
  * Only fields we can actually stand behind are emitted. Notably absent:
  * `aggregateRating`, `review` and `offers` — Google treats all three as
@@ -94,15 +146,49 @@ export function websiteSchema() {
  * confirmed public address exists.
  */
 export function productSchemas() {
-  return products.map((product) => ({
+  return products.map((product) => productSchema(product));
+}
+
+/** One product's `SoftwareApplication`, used by its own page. */
+export function productSchema(product: Product) {
+  return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: product.name,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     description: `${product.positioning} ${product.description}`,
-    featureList: product.capabilities,
+    featureList: product.modules,
+    url: `${site.url}/products/${product.slug}`,
     publisher: { '@type': 'Organization', name: site.name, url: site.url },
-    ...(product.cta.href ? { url: product.cta.href } : {}),
-  }));
+    ...(product.cta.external && product.cta.href ? { sameAs: [product.cta.href] } : {}),
+  };
+}
+
+/**
+ * `Service` for a solution page.
+ *
+ * A partner platform is described as a service Axlo *provides in relation to*
+ * that platform — never as software Axlo publishes. `provider` is always Axlo;
+ * the vendor appears only in the service name and description. This is the
+ * structured-data half of the brand rule in brief section 13.
+ */
+export function serviceSchema(solution: Solution) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: solution.vendor ? `${solution.name} implementation and support` : solution.name,
+    serviceType: solution.name,
+    description: solution.description,
+    provider: { '@type': 'Organization', name: site.name, url: site.url },
+    url: `${site.url}/solutions/${solution.slug}`,
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: `${solution.name} capabilities`,
+      itemListElement: solution.capabilities.map((capability) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: capability },
+      })),
+    },
+  };
 }

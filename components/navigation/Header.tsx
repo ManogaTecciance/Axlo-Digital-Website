@@ -1,89 +1,79 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, useScroll, useSpring } from 'motion/react';
 import { Logo } from '@/components/foundations/Logo';
 import { Container } from '@/components/layout/Layout';
 import { track } from '@/lib/analytics';
 import { useReducedMotion, useScrolled } from '@/lib/hooks';
-import { navigateToSection, useScrollSpy } from '@/lib/scroll';
-import { primaryCta, primaryNav, sectionIds } from '@/lib/site';
+import { primaryCta, primaryNav } from '@/lib/site';
 import { MobileMenu } from './MobileMenu';
 import styles from './Header.module.css';
 
 /**
- * Sticky single-page header.
+ * Sticky site header.
  *
- * Every item is an in-page anchor. Clicks are intercepted for smooth,
- * reduced-motion-aware scrolling with focus management and a synced URL hash,
- * but each link keeps its real `#section` href so navigation still works
- * without JavaScript. The active item is driven by an IntersectionObserver
- * (see `useScrollSpy`) rather than a scroll listener.
+ * The site used to be one scrolling document, so this navigated by hash and
+ * marked the active item from an IntersectionObserver scroll spy. It now
+ * navigates between real routes, so the active item comes from the pathname —
+ * no observer, no hydration-gated `aria-current`, and every item is a plain
+ * `next/link` that prefetches and works without JavaScript.
+ *
+ * `aria-current="page"` marks the active route. A child route marks its parent
+ * as `aria-current="true"` instead, so a visitor on /products/comply360 can
+ * still see which section of the site they are in without the header claiming
+ * to be the page they are on.
  */
 export function Header() {
   const scrolled = useScrolled(8);
   const reduced = useReducedMotion();
-  const active = useScrollSpy(sectionIds);
-  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
 
-  useEffect(() => setMounted(true), []);
-
-  // The CTA and the "Contact" nav item share a destination but are different
-  // actions, so the caller names the event rather than it being inferred.
-  const handleNav = (
-    event: React.MouseEvent<HTMLAnchorElement>,
-    id: string,
-    reportAs: 'nav_section_click' | 'cta_start_project' = 'nav_section_click',
-  ) => {
-    track(reportAs, { id, placement: 'header' });
-    // Let modified clicks (open in new tab etc.) behave normally.
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    navigateToSection(id);
+  const currentFor = (href: string): 'page' | 'true' | undefined => {
+    if (pathname === href) return 'page';
+    // /products/comply360 lights up "Products" without claiming to be it.
+    if (href !== '/' && pathname.startsWith(`${href}/`)) return 'true';
+    return undefined;
   };
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <Container>
         <div className={styles.inner}>
-          <a
-            className={styles.brand}
-            href="#home"
-            aria-label="Axlo Digital — back to top"
-            onClick={(event) => handleNav(event, 'home')}
-          >
+          <Link className={styles.brand} href="/" aria-label="Axlo Digital — home">
             <Logo size="2.25rem" as="static" />
-          </a>
+          </Link>
 
           <nav className={styles.nav} aria-label="Primary">
             <ul className={styles.navList}>
               {primaryNav.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     className={styles.navLink}
                     href={item.href}
-                    aria-current={mounted && active === item.sectionId ? 'true' : undefined}
-                    onClick={(event) => handleNav(event, item.sectionId)}
+                    aria-current={currentFor(item.href)}
+                    onClick={() => track('nav_route_click', { id: item.href, placement: 'header' })}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
           <div className={styles.actions}>
-            <a
+            <Link
               className={styles.cta}
               href={primaryCta.href}
-              onClick={(event) => handleNav(event, primaryCta.sectionId, 'cta_start_project')}
+              onClick={() => track('cta_talk_to_axlo', { id: 'header', placement: 'header' })}
             >
               {primaryCta.label}
-            </a>
-            <MobileMenu activeSection={active} />
+            </Link>
+            <MobileMenu />
           </div>
         </div>
       </Container>

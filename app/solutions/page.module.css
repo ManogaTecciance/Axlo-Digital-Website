@@ -1,0 +1,47 @@
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.groupHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+/* The paragraph that draws the owned/partner line. Given real measure and
+   contrast rather than being tucked away as fine print — it is the sentence
+   the brand rule depends on. */
+.groupLead {
+  margin-top: var(--space-4);
+  margin-bottom: var(--flow-intro-content);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 62ch;
+}
+
+.note {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: var(--border-hairline) solid var(--color-border);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+  max-width: 62ch;
+}
+
+.noteLink {
+  color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.24em;
+}
+
+.noteLink:hover {
+  color: var(--color-accent);
+}

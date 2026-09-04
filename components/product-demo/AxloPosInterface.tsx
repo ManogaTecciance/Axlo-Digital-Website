@@ -17,7 +17,7 @@ import styles from './AxloPosInterface.module.css';
  * and the interface text stays sharp and selectable-crisp at every zoom level.
  *
  * CONTENT POLICY
- * Currency is LKR, and every figure is neutral sample content inside a frame
+ * Currency is LKR, and every figure is illustrative demo data inside a frame
  * that says so. No customer, transaction or trading claim is made anywhere.
  */
 

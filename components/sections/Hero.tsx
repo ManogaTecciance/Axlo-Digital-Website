@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import { Eyebrow } from '@/components/foundations/Primitives';
+import { CtaLink } from '@/components/navigation/CtaLink';
 import { Container, Section } from '@/components/layout/Layout';
 import { HeroDepth } from '@/components/motion/HeroDepth';
-import { SectionCta } from '@/components/navigation/SectionCta';
-import { site } from '@/lib/site';
+import { primaryCta, secondaryCta, site } from '@/lib/site';
 import styles from './Hero.module.css';
 
 /**
@@ -38,26 +38,32 @@ export function Hero() {
           </div>
 
           <h1 className={styles.headline} id="hero-heading" data-hero-step>
-            {'We design and build digital products\nthat keep businesses moving.'}
+            {'We build digital products that make\ncomplex business operations simple.'}
           </h1>
 
           <p className={styles.supporting} data-hero-step>
-            Axlo Digital combines strategy, experience design, AI, and software engineering to
-            transform complex operations into connected digital products.
+            {site.description}
           </p>
 
           <div className={styles.ctas} data-hero-step>
-            <SectionCta sectionId="contact" size="lg" withArrow analyticsId="hero-start-a-project">
-              Start a project
-            </SectionCta>
-            <SectionCta
-              sectionId="products"
+            <CtaLink
+              href={secondaryCta.href}
               size="lg"
-              variant="secondary"
+              withArrow
+              event="cta_explore_products"
               analyticsId="hero-explore-our-products"
             >
-              Explore our products
-            </SectionCta>
+              {secondaryCta.label}
+            </CtaLink>
+            <CtaLink
+              href={primaryCta.href}
+              size="lg"
+              variant="secondary"
+              event="cta_talk_to_axlo"
+              analyticsId="hero-talk-to-axlo"
+            >
+              {primaryCta.label}
+            </CtaLink>
           </div>
         </div>
 
@@ -106,7 +112,7 @@ export function Hero() {
               </span>
               <p className={styles.quoteText}>{site.secondaryMessage}</p>
               <footer className={styles.quoteFooter}>
-                <span className={styles.quoteName}>{site.primaryMessage}</span>
+                <span className={styles.quoteName}>{site.positioning}</span>
                 <span className={styles.quoteRole}>{site.name}</span>
               </footer>
             </blockquote>

@@ -1,31 +1,63 @@
 import { expect, test } from '@playwright/test';
-import { RESOLUTIONS, settle } from './helpers';
+import { NAV_BREAKPOINT, RESOLUTIONS, SAMPLE_ROUTES, settle } from './helpers';
 
 /**
  * Layout integrity at every resolution the brief calls out.
  *
  * Runs on the desktop project only — the viewport is set per test, so running
- * the same twelve sizes twice would just be the same assertions again.
+ * the same sizes twice would just be the same assertions again.
  */
 test.describe('responsive layout', () => {
-  test.skip(({ viewport }) => (viewport?.width ?? 0) < 1024, 'viewport is set per test');
+  test.skip(({ viewport }) => (viewport?.width ?? 0) < NAV_BREAKPOINT, 'viewport is set per test');
 
   for (const [label, width, height] of RESOLUTIONS) {
-    test(`${label} has no horizontal overflow`, async ({ page }) => {
+    test(`${label} has no horizontal overflow on any template`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto('/');
-      await settle(page);
 
-      const overflow = await page.evaluate(() => ({
-        doc: document.documentElement.scrollWidth,
-        win: window.innerWidth,
-      }));
+      for (const route of SAMPLE_ROUTES) {
+        await page.goto(route);
+        await settle(page);
 
-      expect(overflow.doc, `${overflow.doc}px of content in a ${overflow.win}px viewport`).toBeLessThanOrEqual(
-        overflow.win,
-      );
+        const overflow = await page.evaluate(() => ({
+          doc: document.documentElement.scrollWidth,
+          win: window.innerWidth,
+        }));
+
+        expect(
+          overflow.doc,
+          `${route}: ${overflow.doc}px of content in a ${overflow.win}px viewport`,
+        ).toBeLessThanOrEqual(overflow.win);
+      }
     });
   }
+
+  test('the header nav becomes a drawer below the breakpoint and not above it', async ({ page }) => {
+    await page.goto('/');
+
+    await page.setViewportSize({ width: NAV_BREAKPOINT, height: 900 });
+    await page.waitForTimeout(200);
+    await expect(page.locator('header nav a').first()).toBeVisible();
+
+    await page.setViewportSize({ width: NAV_BREAKPOINT - 1, height: 900 });
+    await page.waitForTimeout(200);
+    await expect(page.locator('header nav a').first()).toBeHidden();
+    await expect(page.locator('header button').first()).toBeVisible();
+  });
+
+  test('the header row never wraps at the breakpoint it claims to fit', async ({ page }) => {
+    // Seven nav items, a logo and a CTA is the tightest row on the site; a
+    // wrapped header is the failure this breakpoint was chosen to avoid.
+    for (const width of [NAV_BREAKPOINT, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      await page.waitForTimeout(200);
+
+      const height = await page
+        .locator('header')
+        .evaluate((el) => el.getBoundingClientRect().height);
+      expect(height, `${width}px header height`).toBeLessThan(100);
+    }
+  });
 
   test('the process section is four across on desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -80,24 +112,29 @@ test.describe('responsive layout', () => {
     expect(columns, 'mobile').toBe(1);
   });
 
-  test('the flipped product gets the wide column, not the narrow one', async ({ page }) => {
+  test('every product panel gives its visual the same share of the row', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await settle(page);
 
-    const widths = await page.locator('#products article').evaluateAll((panels) =>
+    const shares = await page.locator('#products article').evaluateAll((panels) =>
       panels.map((panel) => {
-        const visual = panel.querySelector('[aria-roledescription=carousel]')!;
+        // Carousel for products with composed screens, module map for the rest.
+        const visual =
+          panel.querySelector('[aria-roledescription=carousel]') ?? panel.querySelector('figure');
+        if (!visual) return 0;
         return visual.getBoundingClientRect().width / panel.getBoundingClientRect().width;
       }),
     );
 
-    // Both products' visuals take the same share of their row.
-    for (const share of widths) {
-      expect(share).toBeGreaterThan(0.55);
-      expect(share).toBeLessThan(0.68);
+    expect(shares).toHaveLength(4);
+    for (const share of shares) {
+      expect(share).toBeGreaterThan(0.5);
+      expect(share).toBeLessThan(0.7);
     }
-    expect(Math.abs(widths[0] - widths[1])).toBeLessThan(0.02);
+    // No panel is materially wider than any other — neither side of the flip,
+    // and neither presentation.
+    expect(Math.max(...shares) - Math.min(...shares)).toBeLessThan(0.03);
   });
 
   test('the hero headline holds its two authored lines on a laptop', async ({ page }) => {

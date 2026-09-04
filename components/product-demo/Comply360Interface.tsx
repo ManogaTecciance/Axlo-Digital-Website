@@ -12,7 +12,7 @@ import styles from './Comply360Interface.module.css';
  * the filing workflow and the reporting overview.
  *
  * CONTENT POLICY
- * Every figure is neutral sample content inside a frame that says so. The
+ * Every figure is illustrative demo data inside a frame that says so. The
  * obligation names are Sri Lankan statutory tax types — a description of the
  * product's scope, not a claim about any customer's filing position.
  */

@@ -1,0 +1,90 @@
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.audience {
+  font-size: var(--text-body-md);
+  color: var(--color-accent);
+}
+
+/* ---- Vendor ownership statement ----------------------------------------- */
+
+/* Sits directly under the hero on every partner-platform page. Bordered and
+   flagged, so it reads as a statement of fact about ownership rather than as
+   marketing copy that can be skimmed past. */
+.vendorBand {
+  padding-block: var(--space-8);
+  border-block: var(--border-hairline) solid var(--color-border);
+}
+
+.vendorStatement {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 78ch;
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}
+
+.vendorLabel {
+  align-self: flex-start;
+  padding: 0.2rem var(--space-3);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ---- Blocks -------------------------------------------------------------- */
+
+.blockHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.blockLead {
+  margin-top: var(--space-4);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+  max-width: 56ch;
+}
+
+.capabilities {
+  margin-top: var(--flow-intro-content);
+}
+
+/* ---- Closing CTA -------------------------------------------------------- */
+
+.cta {
+  max-width: 46rem;
+}
+
+.ctaHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.ctaLead {
+  margin-top: var(--space-4);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--color-text-secondary);
+}

@@ -16,25 +16,38 @@
  * Events carry a stable id and a coarse placement, and nothing else.
  */
 
-/** Every conversion-relevant interaction on the page, named once. */
+/** Every conversion-relevant interaction on the site, named once. */
 export type AnalyticsEvent =
-  | 'cta_start_project'
+  | 'cta_talk_to_axlo'
   | 'cta_explore_products'
   | 'product_explore'
+  | 'solution_explore'
+  | 'industry_explore'
   | 'email_click'
+  | 'nav_route_click'
   | 'nav_section_click'
   | 'product_carousel_interact'
-  | 'final_cta_view';
+  | 'final_cta_view'
+  | 'contact_form_start'
+  | 'contact_form_submit'
+  | 'contact_form_success'
+  | 'contact_form_error';
 
 type AnalyticsPayload = {
-  /** Which instance of the action fired — e.g. `hero-start-a-project`. */
+  /** Which instance of the action fired — e.g. `hero-talk-to-axlo`. */
   id?: string;
-  /** Section the interaction happened in. */
+  /** Section or page region the interaction happened in. */
   placement?: string;
   /** For product events: which product. */
   product?: string;
   /** For carousel events: how the visitor drove it. */
   method?: 'prev' | 'next' | 'dot' | 'swipe' | 'keyboard' | 'autoplay-toggle';
+  /**
+   * For form errors: which fields failed, by name only.
+   *
+   * Never the values — a validation event must not carry what somebody typed.
+   */
+  fields?: string[];
 };
 
 type DataLayerRecord = { event: string } & AnalyticsPayload;

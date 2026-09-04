@@ -19,12 +19,13 @@
   border-bottom: var(--border-hairline) solid var(--color-border);
 }
 
-/* Two columns as soon as there is room, three from the tablet up: brand and
-   contact, the page's sections, then the products. */
+/* Brand block over the link columns while there is no room, then all four
+   tracks across once there is: brand and contact, Products, Solutions,
+   Company. */
 @media (min-width: 640px) {
   .top {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-12);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-10) var(--space-8);
     align-items: start;
   }
 
@@ -33,10 +34,10 @@
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .top {
-    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-16);
+    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    gap: var(--space-12);
   }
 
   .brandBlock {
@@ -158,21 +159,21 @@
   color: var(--color-accent);
 }
 
-/* Legal placeholders — visibly pending, announced, never a dead link. */
-.placeholder {
+/* Legal links. Real pages since the policy content landed — the previous
+   "Coming soon" chips are gone, as brief section 23 requires before launch.
+   Sized to a 44px target because they sit in a dense row. */
+.legalLink {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  min-height: 2.75rem;
   font-size: var(--text-body-sm);
   color: var(--color-text-muted);
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: color var(--duration-micro) var(--ease-flow);
 }
 
-.placeholderTag {
-  padding: 0.1rem var(--space-2);
-  border: var(--border-hairline) dashed var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-caption);
-  letter-spacing: 0.02em;
+.legalLink:hover {
+  color: var(--color-text);
 }
 
 /* ---- Background wordmark ------------------------------------------------- */

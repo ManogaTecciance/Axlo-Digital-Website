@@ -56,7 +56,7 @@
 .navList {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .navLink {
@@ -64,7 +64,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
   border-radius: var(--radius-sm);
   font-size: 0.9375rem; /* 15 */
   font-weight: 500;
@@ -78,6 +78,12 @@
 @media (min-width: 1280px) {
   .navLink {
     font-size: 1rem; /* 16 */
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (min-width: 1440px) {
+  .navLink {
     padding-inline: var(--space-5);
   }
 }
@@ -93,8 +99,8 @@
 .navLink::after {
   content: '';
   position: absolute;
-  left: var(--space-4);
-  right: var(--space-4);
+  left: var(--space-3);
+  right: var(--space-3);
   bottom: 0.35rem;
   height: 2px;
   border-radius: var(--radius-pill);
@@ -108,19 +114,34 @@
 
 @media (min-width: 1280px) {
   .navLink::after {
+    left: var(--space-4);
+    right: var(--space-4);
+  }
+}
+
+@media (min-width: 1440px) {
+  .navLink::after {
     left: var(--space-5);
     right: var(--space-5);
   }
 }
 
+.navLink[aria-current='page'],
 .navLink[aria-current='true'] {
   color: var(--color-text);
   font-weight: 600;
 }
 
+.navLink[aria-current='page']::after,
 .navLink[aria-current='true']::after {
   transform: scaleX(1);
   opacity: 1;
+}
+
+/* A parent section (e.g. Products while on /products/comply360) is marked, but
+   more quietly than the page the visitor is actually on. */
+.navLink[aria-current='true']::after {
+  opacity: 0.55;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -174,7 +195,10 @@
   }
 }
 
-@media (min-width: 1024px) {
+/* The drawer serves every width below this. Seven nav items, the logo and the
+   CTA need ~1010px of content box; 1120 is the first step that clears it with
+   the gutter included and no risk of the row wrapping. */
+@media (min-width: 1120px) {
   .nav {
     display: flex;
   }

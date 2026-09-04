@@ -1,0 +1,30 @@
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+/* The pointer to the services layer. Quiet by design — it is a signpost, not a
+   second call to action — but present, because keeping owned products and
+   partner platforms distinct only works if the visitor knows where the other
+   one is. */
+.note {
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: var(--border-hairline) solid var(--color-border);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+  max-width: 62ch;
+}
+
+.noteLink {
+  color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.24em;
+}
+
+.noteLink:hover {
+  color: var(--color-accent);
+}

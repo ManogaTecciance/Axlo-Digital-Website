@@ -1,27 +1,67 @@
 # Axlo Digital — website
 
-_Connected technology. Faster business._
+_Connected technology for the way your business works._
 
 Production frontend for [axlodigital.com](https://www.axlodigital.com): a Next.js App Router
-site built on the **Axlo Flow design system**, with an authored dark and light theme, a
-reduced-motion mode, and a connected-flow motion concept that runs from the hero to the final CTA.
+site built on the **Axlo Flow design system**, dark-only, with a reduced-motion mode and a
+connected-flow motion concept that runs from the hero to the final CTA.
+
+Built to the *Axlo Digital Website Redesign & Development Brief* (26 August 2026). Section
+references in the source (`brief §13`, `brief §20`…) point at that document.
 
 ---
 
 ## Quick start
 
-```bash
-npm install
-npm run dev      # http://localhost:3000
-```
+You need **Node 18.18+** (developed on Node 22) and a package manager. The repo carries a
+`pnpm-lock.yaml`, so pnpm gives a reproducible install:
 
 ```bash
-npm run build    # production build
-npm run start    # serve the production build
-npm run typecheck
+pnpm install
+pnpm dev                 # http://localhost:3000
 ```
 
-Requires Node 18.18+ (developed on Node 24).
+npm works too (`npm install && npm run dev`), it just resolves from `package-lock.json`.
+
+### Everything else
+
+```bash
+pnpm build               # production build (also type-checks and lints)
+pnpm start               # serve the production build on :3000
+pnpm start -p 4000       # …on another port
+
+pnpm typecheck           # tsc --noEmit
+pnpm lint                # eslint
+pnpm test                # Playwright end-to-end suite
+pnpm test:ui             # the same suite, with the Playwright inspector
+```
+
+`pnpm test` builds the site and starts it on port 4331 itself — you do not need a server
+running first. On a clean machine, install the browser once:
+
+```bash
+npx playwright install chromium
+```
+
+If your environment already has a Chromium that Playwright did not download, point the run
+at it instead:
+
+```bash
+PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome pnpm test
+```
+
+### Environment variables
+
+None are required to run the site locally — it builds and serves with no configuration.
+Two are read in production, both by the enquiry endpoint:
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `AXLO_ENQUIRY_WEBHOOK` | To deliver enquiries | URL the contact form POSTs each enquiry to as JSON. |
+| `AXLO_ENQUIRY_TOKEN` | Optional | Sent as `Authorization: Bearer …` with that request. |
+
+With no webhook set, the form validates normally and then tells the visitor it is not
+connected yet, offering a prefilled mailto. See [Contact form](#contact-form).
 
 ---
 
@@ -32,243 +72,224 @@ Requires Node 18.18+ (developed on Node 24).
 | Framework | Next.js 15 (App Router), React 19, TypeScript |
 | Styling | CSS Modules + CSS custom properties (**no Tailwind**) |
 | Component transitions | Motion for React (`motion`) |
-| Complex timelines | GSAP — exactly one timeline, the hero entrance |
-| 3D | React Three Fiber — the hero scene only |
-| Diagrams | SVG, hand-authored |
-| Primitives | Radix UI — dialog, accordion, toast, tooltip |
+| Scroll reveals | CSS, progressively enhanced — no animation library |
+| Diagrams and product UI | SVG and composed HTML, hand-authored |
+| Primitives | Radix UI — dialog only |
+| Tests | Playwright (+ axe-core) |
 
-One library per animation responsibility. Nothing overlaps.
+There is no GSAP, no three.js and no charting library: the hero entrance is a CSS keyframe,
+and the product screens are composed from the primitives in `components/product-demo`.
 
 ---
 
 ## Project structure
 
 ```
-app/                      Routes (13 pages + API route + sitemap/robots)
-├── page.tsx              Homepage — 11 sections
-├── services/[slug]/      Reusable service template
-├── work/[slug]/          Reusable case-study template (16 sections)
-├── axlopos/              AxloPOS product site
-├── insights/[slug]/      Article template
-├── contact/              Contact form
-├── privacy/ terms/       Legal
-└── not-found.tsx         Custom 404
+app/                         29 routes + the enquiry API + sitemap/robots
+├── page.tsx                 Homepage — nine bands (brief §6)
+├── what-we-do/              The four capability areas in full (§7)
+├── products/                Portfolio index (§8)
+│   └── [slug]/              One template, four products (§9–§12)
+├── solutions/               Partner platforms + Axlo engineering (§13, §14)
+│   └── [slug]/              One template, six services
+├── industries/              Six sectors (§15)
+│   └── [slug]/              Problems → fit → workflows → integrations
+├── why-axlo/                Six positions (§16)
+├── about/                   Company, mission, vision, values, leadership (§17)
+├── case-studies/            The proof framework (§18)
+├── insights/                Article index and category model (§19)
+├── contact/                 The conversion page (§20)
+├── legal/                   privacy · terms · cookies (§23)
+├── api/enquiry/             Server-side validation + delivery seam
+└── not-found.tsx            Custom 404
 
 components/
-├── foundations/          Button, Logo, Tag, Eyebrow, SectionHeading, Placeholder…
-├── layout/               Container, Section, Grid, PageHero, ThemeProvider, ThemeToggle
-├── navigation/           Header, MobileMenu, Footer
-├── sections/             The eleven homepage sections
-├── motion/               FlowLine, StageRail, Reveal, HeroSequence, CursorAffordance
-├── data-visualization/   Charts, ChartFrame, Diagrams
-├── case-studies/         Cards, previews, filterable index
-├── product-demo/         AxloPOS screens and module map
-├── insights/             Article cards and index
-├── forms/                Field primitives + ContactForm
-├── feedback/             Dialog, Toast, Tooltip, Empty/Error/Loading states
-└── accessibility/        SkipLink
+├── foundations/             Button, Logo, Tag, Eyebrow, Placeholder…
+├── layout/                  Container, Section, Grid, PageHero, PageBlocks, LegalPage
+├── navigation/              Header, MobileMenu, Footer, CtaLink
+├── sections/                The homepage bands
+├── motion/                  FlowLine, StageRail, Reveal, HeroDepth, CursorAffordance
+├── product-demo/            Comply360 and AxloPOS screens, module map, carousel
+├── forms/                   EnquiryForm
+└── accessibility/           SkipLink
 
-content/                  All copy, as typed modules
-├── services/  work/  insights/  company/  axlopos/
+content/                     All copy. Pages read from here; none author their own.
+├── products/                Four products: positioning, modules, feature groups
+├── solutions/               Six services — `vendor` marks a partner platform
+├── industries/              Six sectors, linked to products/solutions by id
+├── company/                 Stages, Why Axlo, About, leadership, case studies
+├── insights/                Article model + categories
+└── legal/                   Privacy, terms and cookie copy
 
-styles/
-├── tokens.css            Primitive tokens (raw brand values)
-├── light-theme.css       Semantic tokens — light
-├── dark-theme.css        Semantic tokens — dark (authored, not inverted)
-├── typography.css        Fluid scale
-├── motion.css            Keyframes + reduced-motion rules
-└── globals.css           Reset, focus, helpers
+lib/                         site (nav + CTAs), seo, enquiry, analytics, hooks, motion
+styles/                      tokens · dark-theme · typography · motion · globals
+tests/                       Playwright specs
+```
 
-docs/PHASE-1-ARCHITECTURE.md   IA, design direction, component inventory, motion plan
+**The content layer is the point.** A product renamed in `content/products` changes the
+homepage, the products index, its own page, every industry page that references it, the
+footer, the sitemap and its structured data. No page restates content it did not author.
+
+---
+
+## Information architecture
+
+```
+/                       Hero → Problem → Capabilities → Products →
+                        ERP & Finance → Why Axlo → How We Work → Proof → CTA
+/what-we-do
+/products               /products/{comply360,axlo-payroll,axlo-budget,axlopos}
+/solutions              /solutions/{odoo,quickbooks,erp-business-systems,
+                                    ai-automation,system-integration,custom-software}
+/industries             /industries/{retail,manufacturing,distribution,
+                                     restaurants-hospitality,professional-services,
+                                     finance-accounting}
+/why-axlo   /about   /case-studies   /insights   /contact
+/legal/{privacy,terms,cookies}
 ```
 
 ---
 
-## Design system
+## The owned/partner rule
 
-**Two token layers.** `styles/tokens.css` holds raw brand values. The theme files map those to
-semantics — `--color-surface`, `--color-action`, `--color-on-accent`. **Components consume only
-semantics.** That rule is what makes both themes work without forking a component, and it is the
-first thing to check in review.
+**Odoo and QuickBooks are not Axlo products.** Brief §13, §24 and §26 all say so, and it is
+the easiest thing here to break by accident — one card moved between two sections does it.
 
-Foreground pairing is a token, not a per-usage decision: `--color-on-accent` and
-`--color-on-highlight` resolve to dark ink, so white text can never land on Flow Aqua or Volt Lime.
+It is enforced structurally, not by careful wording:
 
-**Section-local themes.** Any `<Section theme="dark|light">` flips the semantic layer for its
-subtree, which is how the page alternates bands. The sticky header samples the section beneath it
-and re-tints to match.
+- Owned software lives under `/products`; third-party platforms live under `/solutions`.
+  The two never share a page, a card treatment or a URL prefix.
+- `content/solutions` carries a `vendor` field. Set, and the UI labels the entry
+  "Partner platform · <vendor>", the page adds an ownership statement, and the structured
+  data emits `Service` (provided by Axlo) rather than `SoftwareApplication`.
+- The homepage reads owned products first, then a separately-styled partner band.
+- `tests/brand-separation.spec.ts` asserts all of it — including that a vendor name can
+  only appear beside an Axlo product as an explicit integration ("Connects to QuickBooks").
 
-**The gradient** (`--gradient-flow`) is reserved for the Axlo diagonal, brand paths, hero geometry
-and one highlight per section. Never body text, form fields, standard navigation, every button, or
-error states. Volt Lime is budgeted at roughly 5% of any composition.
-
----
-
-## Themes
-
-Three states — light, dark, follow the system — exposed as a radiogroup so "system" is directly
-selectable rather than hidden behind a two-way switch. The preference persists in
-`localStorage` and is applied by a small inline script before first paint, so a stored dark
-preference never flashes light.
-
----
-
-## Motion
-
-| Tier | Duration | Owner |
-| --- | --- | --- |
-| Micro | 150ms | CSS |
-| Component | 220ms | Motion for React |
-| Reveal | 560ms | CSS + IntersectionObserver |
-| Hero sequence | ~1200ms | GSAP (one timeline) |
-| Ambient | 8–16s | CSS / R3F |
-
-Easing is a single token: `cubic-bezier(0.22, 1, 0.36, 1)`.
-
-Scroll reveals are deliberately **not** a Motion `initial` variant: that would
-serialise `opacity: 0` into the server HTML and hide content from anyone whose
-JavaScript never runs. Instead elements render visible, and only those still
-below the fold after hydration are hidden and revealed by an
-IntersectionObserver — so nothing flashes and nothing is ever lost.
-
-**Reduced motion is a designed mode, not a kill switch.** With `prefers-reduced-motion: reduce`
-or the in-page **Reduce motion** control (footer and mobile menu): parallax and pointer response
-are removed, path draws snap to their final state, loops stop, the 3D hero is replaced by its SVG
-poster, and reveals collapse to a 120ms opacity fade. All content and functionality remain.
-
-The hero also carries a **pause control** for its ambient loop regardless of preference.
-
----
-
-## The hero
-
-`components/sections/HeroVisual.tsx` decides what to render. The R3F scene mounts only when the
-viewport is tablet-plus, WebGL is available, motion is not reduced, and the visual is on screen.
-In every other case — including first paint and no-JS — the SVG poster (`HeroPoster.tsx`) renders
-instead. The poster is a real drawing of the idea, not a loading shim, so nothing is lost when the
-scene never mounts. Space is reserved by aspect ratio, so there is no layout shift either way.
-Geometry, packet count and DPR are reduced on low-power devices.
-
----
-
-## Accessibility
-
-Target: **WCAG 2.2 AA**.
-
-- Skip link, landmarks, one `h1` per page, no skipped heading levels.
-- Focus ring: 2px `--color-focus` at 2px offset, contrast-checked in both themes.
-- The service index and capability map are tablists (click + arrow keys + focus), falling back to
-  accordions below 1024px. **Nothing is hidden behind hover.**
-- Every diagram is either decorative-and-hidden with the meaning in adjacent copy, or given a
-  role, label and text alternative. Charts ship a written summary and a real data table.
-- No colour-only meaning anywhere: active and status states pair colour with a label, icon,
-  weight or position.
-- Forms use real labels, `aria-describedby` for descriptions and errors, `aria-invalid`, an error
-  summary that takes focus on failed submit, and a polite live region for success.
-- Touch targets ≥44px on all major controls.
-- The custom cursor is **additive** — the system cursor is never hidden — and it is disabled on
-  coarse pointers and under reduced motion.
-
-### Manual checks before release
-
-```
-□ Tab the whole page: focus always visible, order matches reading order
-□ Operate the service index and capability map by keyboard alone
-□ Open and close the mobile menu by keyboard — focus returns to the trigger
-□ Submit the contact form empty — the error summary takes focus
-□ Zoom text to 200% — no clipping, no horizontal page scroll
-□ Toggle reduced motion — content and functionality unchanged
-□ Toggle light/dark — hierarchy and contrast hold in both
-□ Disable JavaScript — content, navigation and links still work
-```
-
----
-
-## Performance
-
-- One real-time 3D experience, dynamically imported with `ssr: false`, behind a capability check.
-- Server Components by default; `'use client'` only where interaction requires it.
-- Aspect-ratio boxes reserve space for every media slot — no CLS.
-- Animations pause off-screen via `IntersectionObserver`; the canvas drops to `frameloop="demand"`
-  when paused.
-- Fonts via `next/font` with `display: swap`.
-
-Targets: Lighthouse Performance 90+, Accessibility 95+, Best Practices 95+, SEO 95+.
-
----
-
-## SEO
-
-Per-route `generateMetadata`, canonical URLs, Open Graph and Twitter cards, `app/sitemap.ts`,
-`app/robots.ts`, and JSON-LD for Organization, WebSite, Service, Article, SoftwareApplication and
-BreadcrumbList.
+If you add a platform Axlo implements rather than owns, put it in `content/solutions` with
+a `vendor`. Nothing else needs changing.
 
 ---
 
 ## Content policy — read before editing copy
 
-**Nothing is invented.** No client names, logos, testimonials, awards, partnerships, business
-metrics, certifications, office locations, team members or project outcomes appear anywhere unless
-they have been supplied and verified.
+Brief §18 and §24 are hard rules, not preferences. **Nothing on this site may claim
+something that cannot be verified.**
 
-Where information is missing, the UI renders a visible `<PlaceholderNote>` — for example
-_"Verified outcome to be added"_ — which is also exposed to assistive technology. Case studies
-carry `contentStatus: 'placeholder'` and render a notice while that flag is set.
+- No customer names, logos, testimonials or quotations without written permission.
+- No metrics, percentages, client counts or years-of-experience claims unless verified.
+- No sector track record. Industry pages describe the sector's problems, never Axlo's
+  history in it.
+- Mockup figures are demo data and are labelled as such, visibly and in the accessible
+  name (brief §2).
 
-### Replacing placeholder content
+Where the client has not supplied approved content, the export is an **empty list** and the
+page renders a visible pending panel saying what is needed. `leadership`, `caseStudies` and
+`articles` are all empty by policy — that is a deliberate, load-bearing value, not an
+oversight. Supply entries and the pending panel disappears with no code change.
 
-1. **Case studies** — `content/work/index.ts`. Replace `client`, fill `detail.outcomes` with
-   verified results, then set `contentStatus: 'verified'`. The notice disappears automatically.
-2. **Articles** — `content/insights/index.ts`. Add author and date fields alongside
-   `bylineStatus`, then update `ArticleCard` and the article template to render them.
-3. **Social links** — `lib/site.ts`, `site.social`. The footer renders the section only when the
-   array is non-empty; the placeholder notice disappears at the same time.
-4. **Team** — `app/about/page.tsx`, the "Team" block.
-5. **Legal** — `app/privacy/page.tsx` and `app/terms/page.tsx` carry `pending` notes on every
-   section awaiting legal review.
-6. **AxloPOS integrations** — `content/axlopos/index.ts`. Modules with `status: 'to-confirm'`
-   render an integration disclaimer. Remove the flag only once the integration is confirmed.
+`tests/content.spec.ts` fails the build if an unverifiable claim appears on any page.
 
-Search for `PlaceholderNote`, `placeholder` and `to-confirm` to find every one.
+---
+
+## Themes
+
+The site is **dark-only**. `data-theme="dark"` is written once on `<html>` and never
+changes; there is no light stylesheet in use and no theme switcher. Sections still carry
+their own `data-theme` so the semantic token layer resolves inside them.
+
+Motion is the one display preference, because it is an accessibility control rather than a
+style choice: the OS setting is honoured by default, and the footer/drawer toggle lets
+someone quieten motion on this site alone. It is stored in `localStorage` under
+`axlo-motion` and applied before first paint.
+
+---
+
+## Accessibility
+
+Targets, and what enforces them:
+
+| Commitment | Enforced by |
+| --- | --- |
+| No WCAG 2.2 AA violations on any template | axe-core, per route |
+| One `h1` per page, no skipped heading levels | `accessibility.spec.ts` |
+| 15px body-copy floor | `accessibility.spec.ts` |
+| 44px interactive targets (with the WCAG 2.5.8 inline and stretched-link exceptions) | `accessibility.spec.ts` |
+| Visible focus ring on every control | `accessibility.spec.ts` |
+| Decorative graphics hidden from assistive technology | `accessibility.spec.ts` |
+| Status never conveyed by colour alone | Component CSS + review |
+| Full keyboard operation, focus trapped in the drawer | `navigation.spec.ts` |
+| Reduced motion honoured (OS and in-page) | `products.spec.ts` |
+
+Scroll reveals are progressive enhancement: the server never sends hidden content, so a
+visitor whose JavaScript fails sees everything.
+
+### Manual checks before release
+
+1. Tab the whole page — focus order matches reading order, nothing is trapped.
+2. VoiceOver / NVDA over the product carousels and the enquiry form.
+3. Zoom to 200% and to 400% — no content lost, no horizontal scroll.
+4. Test with reduced motion on at OS level.
+5. Windows High Contrast Mode.
+
+---
+
+## SEO
+
+- Unique title and meta description per indexable page (asserted in `content.spec.ts`).
+- Canonical URLs, Open Graph and Twitter cards; the OG image is a raster, not SVG.
+- `sitemap.xml` and `robots.txt` are generated from the content layer — a new product,
+  solution, industry or article appears without a second edit.
+- Structured data: `Organization`, `WebSite`, `BreadcrumbList` on every secondary page,
+  `SoftwareApplication` per product, `Service` per solution, `Article` per insight.
+  No `aggregateRating`, `review` or invented `offers`.
+- Breadcrumb markup is emitted only where a visible trail exists, which is Google's
+  condition for using it.
 
 ---
 
 ## Contact form
 
-Client-side validation drives feedback; `app/api/contact/route.ts` re-validates server-side
-because the client checks are not trustworthy. Spam prevention avoids CAPTCHA (itself an
-accessibility barrier) in favour of a hidden honeypot, a minimum time-to-submit gate, and
-server-side validation.
+`/contact` posts to `app/api/enquiry`, which:
 
-**Delivery is not wired up.** The route acknowledges receipt without side effects. Connect a
-transactional email provider or CRM at the `TODO(integration)` marker, and add rate limiting at
-the edge before launch.
+1. Drops anything that fills the honeypot or submits in under three seconds — answering
+   `200 OK`, because telling a bot it was detected only trains the next attempt.
+2. Rate-limits to 5 submissions per IP per hour, in process.
+3. Validates server-side using the same rules the browser ran (`lib/enquiry.ts`).
+4. Forwards the enquiry as JSON to `AXLO_ENQUIRY_WEBHOOK`.
+
+**Delivery is a seam, not a dependency.** No email provider is installed — choosing one is
+Axlo's decision, and it carries an account, a cost and a data-processor entry in the
+privacy policy. Any endpoint that accepts a JSON POST works: a CRM intake, a Zapier or Make
+hook, Formspree, or a small mail-sending function.
+
+With no webhook configured the endpoint answers `503 {"reason":"unconfigured"}` and the
+form says so, offering a prefilled mailto. Nothing is ever reported as sent when it was not.
+
+Nothing is logged. Analytics events carry field *names* on a validation failure and never a
+value anybody typed.
 
 ---
 
-## Storybook
+## Analytics
 
-Storybook packages are installed on demand rather than shipped as app dependencies:
+No analytics platform is installed. `lib/analytics.ts` pushes named events to
+`window.dataLayer` **only if something else has already created it**, so installing a tag
+manager later starts reporting correctly-named conversions from day one with no second pass
+over the components. Until then every call is a silent no-op.
 
-```bash
-npx storybook@latest init --builder webpack5
-npm run storybook
-```
-
-`.storybook/main.ts`, `.storybook/preview.tsx` and the stories in `stories/` are already written.
-The preview adds a **Theme** toolbar with a `Both` option that renders each story in light and
-dark side by side, plus the a11y addon.
-
-After installing, remove `"stories"` and `".storybook"` from `exclude` in `tsconfig.json` so the
-stories typecheck with the rest of the app.
+Adding a platform means updating `/legal/privacy` and `/legal/cookies` first, and adding a
+consent mechanism where the jurisdiction requires one.
 
 ---
 
 ## Conventions
 
-- Components consume semantic tokens only — never `--flow-aqua` and friends directly.
-- Every interactive component defines default, hover, focus-visible, pressed and disabled.
-- Copy lives in `content/`, not in components, so it can be replaced without touching JSX.
-- Prefer a Server Component. Add `'use client'` only when state, effects or event handlers demand it.
-- New motion belongs to the tier that already owns that responsibility. Do not add a third
-  animation library.
+- **Content lives in `content/`.** A page that authors its own copy is a bug.
+- **CSS Modules only.** No utility classes, no inline styles except computed values.
+- **Semantic tokens only** (`--color-*`, `--space-*`, `--text-*`). Components never touch
+  the raw brand palette in `tokens.css`.
+- **Comments explain why, not what.** The non-obvious decisions are documented at the top
+  of the file that makes them.
+- **Every animation has a reduced-motion path**, and it is a real alternative, not a
+  removal.
