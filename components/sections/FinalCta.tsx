@@ -20,9 +20,14 @@ import styles from './FinalCta.module.css';
  * The three "I'd like to" interest pills that used to sit under the button were
  * removed: they gave the eye three secondary choices immediately below the one
  * decision this section exists to ask for, and each opened the same mail client
- * the primary action does. The CTA now carries the same wording as every other
- * project action on the page — "Start a project" — so the site asks for one
- * thing in one way.
+ * the primary action does.
+ *
+ * TWO ACTIONS, TWO JOBS
+ * "Start a project" is the navigational action — it appears in the header and
+ * the hero and scrolls here. "Start a conversation" is the action *at* the
+ * destination, and it opens mail with the subject already set. Naming them
+ * differently is deliberate: a button that scrolls and a button that opens a
+ * mail client should not read identically, or the second one surprises people.
  */
 export function FinalCta() {
   const ref = useRef<HTMLDivElement>(null);
@@ -58,7 +63,7 @@ export function FinalCta() {
                 className={styles.primary}
                 onClick={() => track('cta_start_project', { id: 'final-cta', placement: 'contact' })}
               >
-                Start a project
+                Start a conversation
               </Button>
 
               <a

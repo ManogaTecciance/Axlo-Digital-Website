@@ -2,29 +2,137 @@ import { expect, test } from '@playwright/test';
 import { settle } from './helpers';
 
 test.describe('content and conversion', () => {
-  test('every project CTA uses the same wording', async ({ page }) => {
+  test('the two project actions are worded for what they do', async ({ page }) => {
     await page.goto('/');
     await settle(page);
 
-    // The header CTA, the hero primary and the closing action are one action,
-    // so every label that begins with "Start" must read identically. (The nav
-    // "Contact" item points at the same section but is a different affordance,
-    // hence the filter on the verb rather than on the destination.)
-    const labels = await page
-      .locator('a[href="#contact"], a[href^="mailto:hello@axlodigital.com"]')
+    // Two actions with two jobs. Everything that *scrolls* to the closing
+    // section reads "Talk to Axlo" — the approved primary conversion label,
+    // worded once in `primaryCta`; the action *at* that section opens mail and
+    // reads "Start a conversation". A button that scrolls and a button that
+    // launches a mail client must not read identically.
+    //
+    // Every conversion button is matched, not just those starting with a known
+    // word: the previous filter keyed on /^start/i, which would have silently
+    // stopped matching anything the moment the label changed and passed a
+    // vacuous assertion over an empty list.
+    const scrollActions = await page
+      .locator('a[href="#contact"]')
       .evaluateAll((links) =>
         links
-          .map((link) => (link.textContent ?? '').trim())
-          .filter((text) => /^start/i.test(text)),
+          .map((l) => (l.textContent ?? '').trim())
+          // The plain "Contact" nav entries also target #contact. Everything
+          // else pointing there is a conversion button.
+          .filter((t) => t !== 'Contact'),
       );
 
-    expect(labels.length, 'expected to find the project CTAs').toBeGreaterThanOrEqual(2);
-    for (const label of labels) {
-      expect(label, 'CTA wording drifted').toBe('Start a project');
+    expect(scrollActions.length, 'expected the header and hero CTAs').toBeGreaterThanOrEqual(2);
+    for (const label of scrollActions) {
+      expect(label, 'scroll CTA wording drifted').toBe('Talk to Axlo');
     }
 
-    // And the discarded variants are gone from the page entirely.
-    await expect(page.getByText('Start a conversation')).toHaveCount(0);
+    // The retired wording must not survive anywhere on the page.
+    const body = (await page.locator('body').textContent()) ?? '';
+    expect(body, 'the retired CTA label came back').not.toMatch(/start a project/i);
+
+    const mailActions = await page
+      .locator('a[href^="mailto:hello@axlodigital.com"]')
+      .evaluateAll((links) =>
+        links.map((l) => (l.textContent ?? '').trim()).filter((t) => /^start/i.test(t)),
+      );
+
+    expect(mailActions).toEqual(['Start a conversation']);
+  });
+
+  test('the closing action opens mail with the approved subject line', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    const href = await page
+      .locator('#contact a[href^="mailto:"]')
+      .first()
+      .getAttribute('href');
+
+    expect(href).toBe(
+      'mailto:hello@axlodigital.com?subject=Start%20a%20project%20with%20Axlo%20Digital',
+    );
+  });
+
+  test('no "coming soon" placeholder is published', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    const body = (await page.locator('body').textContent()) ?? '';
+    expect(body).not.toMatch(/coming soon/i);
+  });
+
+  test('draft legal pages are not linked and not indexable', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    // Not reachable from the site.
+    await expect(page.locator('a[href="/privacy"], a[href="/terms"]')).toHaveCount(0);
+
+    // The routes resolve for internal review, but tell crawlers to stay out.
+    for (const route of ['/privacy', '/terms']) {
+      const response = await page.goto(route);
+      expect(response?.status(), route).toBe(200);
+      const robots = await page.locator('meta[name="robots"]').first().getAttribute('content');
+      expect(robots, route).toContain('noindex');
+    }
+  });
+
+  test('no unverified integration claim is published', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    // "QuickBooks connected" was withdrawn pending verification — see R3.
+    const body = (await page.locator('body').textContent()) ?? '';
+    expect(body).not.toMatch(/quickbooks/i);
+    expect(body).not.toMatch(/supported integrations|fully integrated/i);
+  });
+
+  test('no availability or maturity claim is published — R3', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    const body = (await page.locator('body').textContent()) ?? '';
+
+    // Nothing may state that a product is shipped, mature, or in use until an
+    // exact approved status is supplied.
+    for (const claim of [
+      /available now/i,
+      /production[- ]ready/i,
+      /used by businesses/i,
+      /trusted by customers/i,
+      /\bin production\b/i,
+    ]) {
+      expect(body, `claim published: ${claim}`).not.toMatch(claim);
+    }
+
+    // And no release-stage badge anywhere in the Products section, which is the
+    // one place a "Live" / "Beta" / "Pilot" / "Coming soon" chip would sit.
+    const products = (await page.locator('#products').textContent()) ?? '';
+    for (const badge of [/\bLive\b/, /\bBeta\b/i, /\bPilot\b/i, /\bComing soon\b/i]) {
+      expect(products, `badge published: ${badge}`).not.toMatch(badge);
+    }
+  });
+
+  test('AxloPOS is described in the approved neutral wording', async ({ page }) => {
+    await page.goto('/');
+    await settle(page);
+
+    const panel = page.locator('#products article', {
+      has: page.getByRole('heading', { name: 'AxloPOS' }),
+    });
+
+    await expect(panel).toContainText(
+      'AxloPOS is a connected point-of-sale and business operations platform for sales, payments, inventory, customers, suppliers, reporting, and operational workflows.',
+    );
+
+    // The withdrawn audience line asserted a customer base in five named
+    // sectors. It must not come back.
+    await expect(panel).not.toContainText(/retail, hardware, tiles/i);
   });
 
   test('the trust layer makes no unverifiable claim', async ({ page }) => {

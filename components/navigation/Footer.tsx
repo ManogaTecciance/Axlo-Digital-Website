@@ -71,13 +71,13 @@ export function Footer() {
             <span className={styles.copyright}>
               © {year} {site.legalName}. All rights reserved.
             </span>
+            {/* Empty while the policies are internal drafts — see `legalNav`
+                in lib/site.ts. Renders nothing rather than a "coming soon"
+                chip. */}
             {legalNav.map((item) => (
-              // Placeholders until real policy pages exist — clearly labelled,
-              // never a dead link.
-              <span key={item.label} className={styles.placeholder} role="note">
+              <a key={item.href} className={styles.link} href={item.href}>
                 {item.label}
-                <span className={styles.placeholderTag}>Coming soon</span>
-              </span>
+              </a>
             ))}
           </div>
           <FooterControls />

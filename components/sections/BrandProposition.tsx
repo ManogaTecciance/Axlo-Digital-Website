@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Section } from '@/components/layout/Layout';
 import { brandStages } from '@/content/company';
+import { isCaptureMode } from '@/components/motion/Reveal';
 import { useReducedMotion } from '@/lib/hooks';
 import { StageDiagram } from './ProcessDiagrams';
 import type { StageVisual } from './ProcessDiagrams';
@@ -28,13 +29,19 @@ function useEntranceSequence(ref: React.RefObject<HTMLElement | null>, enabled: 
     const node = ref.current;
     if (!node) return;
 
-    // `enabled` arrives as `true` on the very first layout pass — the reduced
-    // motion media query is only read in an effect, which runs after this — so
-    // a visitor who has asked for reduced motion briefly gets `enabled: true`
-    // and the section is put into the pending state. When the real preference
-    // lands, this must release the section rather than just declining to hide
-    // it again, or the sequence stays pending for the rest of the session.
-    if (!enabled || typeof IntersectionObserver === 'undefined') {
+    // Two reasons this branch releases the section rather than merely
+    // declining to hide it:
+    //
+    // 1. `enabled` arrives as `true` on the very first layout pass — the
+    //    reduced-motion media query is only read in an effect, which runs
+    //    after this — so a visitor who asked for reduced motion briefly gets
+    //    `enabled: true` and the section is put into the pending state. When
+    //    the real preference lands this must release it, or the sequence stays
+    //    pending for the rest of the session.
+    // 2. This band runs its own observer, so it needs the same
+    //    screenshot-capture bypass as `Reveal` (see the note there) or it is
+    //    the one blank stripe left in an automated capture.
+    if (!enabled || isCaptureMode() || typeof IntersectionObserver === 'undefined') {
       setState('shown');
       return;
     }

@@ -100,7 +100,9 @@ export function productSchemas() {
     name: product.name,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
-    description: `${product.positioning} ${product.description}`,
+    // Positioning is optional; joining a missing one would emit "undefined ..."
+    // into structured data.
+    description: [product.positioning, product.description].filter(Boolean).join(' '),
     featureList: product.capabilities,
     publisher: { '@type': 'Organization', name: site.name, url: site.url },
     ...(product.cta.href ? { url: product.cta.href } : {}),

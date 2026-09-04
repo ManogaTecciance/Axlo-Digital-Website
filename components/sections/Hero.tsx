@@ -3,7 +3,7 @@ import { Eyebrow } from '@/components/foundations/Primitives';
 import { Container, Section } from '@/components/layout/Layout';
 import { HeroDepth } from '@/components/motion/HeroDepth';
 import { SectionCta } from '@/components/navigation/SectionCta';
-import { site } from '@/lib/site';
+import { primaryCta, site } from '@/lib/site';
 import styles from './Hero.module.css';
 
 /**
@@ -47,8 +47,17 @@ export function Hero() {
           </p>
 
           <div className={styles.ctas} data-hero-step>
-            <SectionCta sectionId="contact" size="lg" withArrow analyticsId="hero-start-a-project">
-              Start a project
+            {/* Label comes from `primaryCta`, not a literal: the header, the
+                mobile drawer and this button are one action worded once, and a
+                hand-typed copy here is exactly how the three-label drift this
+                replaced got started. */}
+            <SectionCta
+              sectionId={primaryCta.sectionId}
+              size="lg"
+              withArrow
+              analyticsId="hero-start-a-project"
+            >
+              {primaryCta.label}
             </SectionCta>
             <SectionCta
               sectionId="products"

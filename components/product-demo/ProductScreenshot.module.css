@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Real product screenshot.
+
+   Matches the composed states' frame — same hairline, radius and shadow — so
+   the two products read as one family even though one shows drawings of an
+   interface and the other shows the interface.
+   ========================================================================== */
+
+.frame {
+  /* A `figure`, so the demo-data notice below is its caption rather than a
+     loose paragraph that happens to sit nearby. */
+  margin: 0;
+  overflow: hidden;
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  /* Top-aligned in the carousel cell: the two screenshots are not identical
+     shapes, and the cell is as tall as the taller of them. Anchoring both to
+     the top keeps the product's own header on the same line across the two
+     views instead of letting the shorter one float in the middle. */
+  align-self: start;
+}
+
+.image {
+  /* The only scaling permitted is proportional. Width follows the column,
+     height follows the file's own ratio — so no crop, no letterbox, and no
+     stretch is reachable from any viewport. */
+  width: 100%;
+  height: auto;
+
+  /* Belt and braces. `height: auto` already means the box carries the file's
+     own ratio, so this is an identity today — but it is the property that
+     decides what happens if a future rule ever constrains the height, and
+     `contain` fails safe: the whole interface stays visible and letterboxes
+     rather than having its edges cropped away. */
+  object-fit: contain;
+
+  /* See the component note: the dark-theme photographic grade must not touch a
+     screenshot of a real interface. */
+  filter: none;
+
+  /* The image is the figure's only flow content above the caption; without this
+     the inline baseline leaves a hairline gap between it and the caption rule. */
+  display: block;
+}
+
+/* ==========================================================================
+   Demo-data disclosure.
+
+   Required by §2 and §24 of the client brief: figures shown in product visuals
+   must be labelled unless they are real, approved data.
+
+   Deliberately quiet. It sits *under* the interface on its own bar, at the body
+   floor of 15px, in the same secondary ink the captions use — legible at every
+   width and against the dark surface, without competing with the product it
+   describes. It is never a watermark: nothing is drawn over the screenshot.
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-hairline) solid var(--color-border);
+  background-color: var(--color-surface-interactive);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--color-text-secondary);
+  /* Long enough to wrap at 360px; wrapping is fine, truncation is not — a
+     half-shown disclosure is worse than none. */
+  text-wrap: pretty;
+}
+
+.noticeDot {
+  flex: none;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+}
